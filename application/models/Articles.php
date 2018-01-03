@@ -340,6 +340,7 @@ class Articles extends CI_Model
 		$this->db->select('*');
 		$this->db->from('articles');
 		$this->db->where('artEstado','AC');
+		$this->db->order_by('artDescription', 'asc');
 		if($str != ''){
 			$this->db->like('artBarCode',$str);
 			$this->db->or_like('artDescription',$str);
@@ -352,9 +353,6 @@ class Articles extends CI_Model
 
 				//Calcular precios 
 				$pUnit = $articles['artCoste'];
-				if($articles['artIsByBox'] == 1){
-					$pUnit = $articles['artCoste'] / $articles['artCantBox'];
-				}
 
 				if($articles['artMarginIsPorcent'] == 1){
 					$articles['pVenta'] = $pUnit + ($pUnit * ($articles['artMargin'] / 100));

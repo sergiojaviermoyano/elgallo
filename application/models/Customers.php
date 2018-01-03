@@ -15,6 +15,7 @@ class Customers extends CI_Model
 		$this->db->select('clientes.*, tipos_documentos.docDescripcion');
 		$this->db->from('clientes');
 		$this->db->join('tipos_documentos', 'tipos_documentos.docId = clientes.docId', 'left');
+		$this->db->where(array('cliDefault' => 0));
 		$query= $this->db->get();
 		
 		if ($query->num_rows()!=0)
@@ -59,7 +60,7 @@ class Customers extends CI_Model
 				$cust['cliDocumento'] = '';
 				$cust['cliDomicilio'] = '';
 				$cust['cliTelefono'] = '';
-				$cust['cliMail'] = '';
+				$cust['cliObservacion'] = '';
 				$cust['cliEstado'] = '';
 				$cust['docId'] = '';
 
@@ -98,7 +99,7 @@ class Customers extends CI_Model
 			$lnam = $data['lnam'];
 			$doc = $data['doc'];
 			$dni = $data['dni'];
-			$mail = $data['mail'];
+			$obs = $data['obs'];
 			$dom = $data['dom'];
 			$tel = $data['tel'];
 			$est = $data['est'];
@@ -110,7 +111,7 @@ class Customers extends CI_Model
 				   'cliApellido' => $lnam,
 				   'cliDomicilio' => $dom,
 				   'cliTelefono' => $tel,
-				   'cliMail' => $mail,
+				   'cliObservacion' => $obs,
 				   'cliEstado' => $est
 				);
 

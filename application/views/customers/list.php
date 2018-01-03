@@ -18,8 +18,8 @@
                 <th width="20%">Acciones</th>
                 <th>Cliente</th>
                 <th>DNI - CUIT</th>
-                <th>Domicilio</th>
-                <th>Télefonos</th>
+                <th>Télefono</th>
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -39,10 +39,10 @@
 	                	echo '<i class="fa fa-fw fa-search" style="color: #3c8dbc; cursor: pointer; margin-left: 15px;" onclick="LoadCust('.$c['cliId'].',\'View\')"></i>';
                   }
 	                echo '</td>';
-	                echo '<td style="text-align: left">'.$c['cliApellido'].' , '.$c['cliNombre'].'</td>';
+	                echo '<td style="text-align: left">'.$c['cliApellido'].' '.$c['cliNombre'].'</td>';
                   echo '<td style="text-align: left"> ( '.$c['docDescripcion'].' ) '.$c['cliDocumento'].'</td>';
-                  echo '<td style="text-align: left">'.$c['cliDomicilio'].'</td>';
                   echo '<td style="text-align: left">'.($c['cliTelefono'] != "" ? $c['cliTelefono'] : '').'</td>';
+                  echo '<td style="text-align: center">'.($c['cliEstado'] == 'AC' ? '<small class="label bg-green">Activo</small>' : '<small class="label bg-red">Inactivo</small>').'</td>';
 	                echo '</tr>';
                   
     		        }
@@ -100,7 +100,7 @@
     					},
     		error: function(result){
     					WaitingClose();
-    					alert("error");
+    					ProcesarError(result.responseText, 'modalCustomer');
     				},
           	dataType: 'json'
     		});
@@ -154,7 +154,7 @@
                     lnam: $('#cliApellido').val(),
                     doc: $('#docId').val(),
                     dni: $('#cliDocumento').val(),
-                    mail: $('#cliMail').val(),
+                    obs: $('#cliObservacion').val(),
                     dom: $('#cliDomicilio').val(),
                     tel: $('#cliTelefono').val(),
                     est: $('#cliEstado').val()
@@ -167,7 +167,7 @@
     					},
     		error: function(result){
     					WaitingClose();
-    					alert("error");
+    					ProcesarError(result.responseText, 'modalCustomer');
     				},
           	dataType: 'json'
     		});

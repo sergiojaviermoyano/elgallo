@@ -57,7 +57,7 @@
                     }
 
                     echo '</td>';
-                    echo '<td>'.str_pad($r['recId'], 10, "0", STR_PAD_LEFT).'</td>';
+                    echo '<td>'.str_pad($r['recId'], 4, "0", STR_PAD_LEFT).'</td>';
                     $date = date_create($r['recFecha']);                    
                     echo '<td style="text-align: center">'.date_format($date, 'd-m-Y').'</td>';
                     echo '<td style="text-align: left">'.$r['prvRazonSocial'].' - '.$r['prvApellido'].' '.$r['prvNombre'].'</td>';

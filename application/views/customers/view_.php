@@ -71,10 +71,10 @@
       </div><br>
       <div class="row">
         <div class="col-xs-4">
-            <label style="margin-top: 7px;">Mail: </label>
+            <label style="margin-top: 7px;">Observación: </label>
           </div>
         <div class="col-xs-5">
-            <input type="text" class="form-control" placeholder="sergio.moyano@outlook.com.ar" id="cliMail" value="<?php echo $data['customer']['cliMail'];?>" <?php echo ($data['read'] == true ? 'disabled="disabled"' : '');?> >
+            <input type="text" class="form-control" id="cliObservacion" value="<?php echo $data['customer']['cliObservacion'];?>" <?php echo ($data['read'] == true ? 'disabled="disabled"' : '');?> >
           </div>
       </div><br>
       <div class="row">

@@ -108,7 +108,7 @@
     					},
     		error: function(result){
     					WaitingClose();
-    					alert("error");
+    					ProcesarError(result.responseText, 'modalArticle');
     				},
           	dataType: 'json'
     		});

@@ -203,7 +203,6 @@ class Groups extends CI_Model
 		$this->db->order_by("sismenu.menuFather", "asc");
 		
 		$query = $this->db->get();
-		echo $this->db->last_query();
 
 		$menu = $query->result_array();
 
