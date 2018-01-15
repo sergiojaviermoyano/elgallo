@@ -288,6 +288,30 @@ class Articles extends CI_Model
 
 		return array();
 	}
+
+	function buscadorArticlesPrice($data = null){
+		$str = '';
+		if($data != null){
+			$str = $data['str'];
+		}
+
+		$articles = array();
+
+		$this->db->select('artId, artDescription, artBarcode, artCoste, artMargin, artMarginIsPorcent');
+		$this->db->from('articles');
+		$this->db->like('artDescription', $str, 'both'); 
+		$this->db->or_like('artBarCode', $str, 'both'); 
+		$this->db->or_like('artProvCode', $str, 'both'); 
+		$this->db->where(array('artEstado'=>'AC'));
+		$query = $this->db->get();
+		if ($query->num_rows()!=0)
+		{
+			$articles = $query->result_array();
+			return $articles;
+		}
+
+		return array();
+	}
 	/*
 	function searchByCode($data = null){
 		$str = '';

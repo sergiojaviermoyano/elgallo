@@ -1,0 +1,1 @@
+INSERT INTO `elgallo`.`sismenu` (`menuId`, `menuName`, `menuIcon`, `menuController`, `menuView`, `menuFather`, `menuOrder`) VALUES ('27', 'Services', 'fa fa-fw fa-car', 'services', 'index', NULL, '11');

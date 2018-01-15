@@ -103,4 +103,20 @@ class Brands extends CI_Model
 
 		}
 	}
+
+	function BrandVeh_list(){
+		$this->db->from('marcaveh');
+		$this->db->order_by('marDescripcion', 'asc');
+		$this->db->where(array('marEstado' => 'AC'));
+		$query = $this->db->get(); 
+		
+		if ($query->num_rows()!=0)
+		{
+			return $query->result_array();	
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

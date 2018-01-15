@@ -9,6 +9,6 @@
 
   </body>
   <script>
-  	//Esto dispara un evento para que se cargue el calendario en forma automatica cuando ingreso.
-  	//cargarView('dash', 'calendar', '');
+  	//Esto dispara un evento para que se carguen los accesos directos cuando ingresamos 
+  	cargarView('dash', 'accesosdirectos', '');
   </script>

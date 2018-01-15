@@ -141,5 +141,30 @@ class Customers extends CI_Model
 
 		}
 	}	
+
+	function findCustomer($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$dni = str_replace(' ', '', $data['dni']);
+
+			$this->db->select('clientes.cliNombre, clientes.cliApellido, clientes.cliTelefono, clientes.cliDocumento, clientes.cliId');
+			$this->db->from('clientes');
+			$this->db->where(array('clientes.cliDocumento'=>$dni));
+			$query= $this->db->get();
+			if ($query->num_rows() != 0)
+			{
+				$c = $query->result_array();
+
+				$data['cliente'] = $c[0];
+				return $data;
+			} else {
+				return false;
+			}
+		}
+	}	
 }
 ?>

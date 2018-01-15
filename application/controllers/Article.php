@@ -64,6 +64,18 @@ class article extends CI_Controller {
 		}
 	}
 
+	public function buscadorArticlesPrice() {
+		$data = $this->Articles->buscadorArticlesPrice($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode($data);	
+		}
+	}
+
 	/*
 	public function searchByCode() {
 		$data = $this->Articles->searchByCode($this->input->post());
