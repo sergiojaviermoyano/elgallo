@@ -8,6 +8,162 @@ class Sales extends CI_Model
 		parent::__construct();
 	}
 	
+	function getMPagos($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$id = $data['id'];
+			$total = $data['to'];
+
+			$data = array();
+			$data['idOrden'] = $id;
+			$data['total']	= $total;
+			$data['tmp']	= array();
+
+			$query = $this->db->get_where('tipomediopago',array('tmpEstado'=>'AC'));
+			if ($query->num_rows() != 0)
+				{
+					$tmp = $query->result_array();
+					//$data['tmp'] = $tmp;
+					$data['tmp'] = array();
+					foreach ($tmp as $item) {
+						$query = $this->db->get_where('mediosdepago',array('medEstado'=>'AC', 'tmpId' => $item['tmpId']));	
+						if ($query->num_rows() != 0)
+						{
+							$tmpD = $query->result_array();
+							$item['tmpD'] = $tmpD;
+						} else { 
+							$item['tmpD'] = array(); 
+						}
+
+						$data['tmp'][] = $item;	
+					}
+				}	
+			return $data;
+		}
+	}
+
+	function setSale($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$srvId 	 = $data['id'];
+			$pago 	 = $data['pa'];
+			$detalle = $data['dt'];
+			$cliId   = $data['cl'];
+
+			//Datos del usuario
+			$userdata = $this->session->userdata('user_data');
+			$usrId = $userdata[0]['usrId'];
+
+			//Datos de la caja 
+			$this->db->select('*');
+			$this->db->where(array('cajaCierre'=>null));
+			$this->db->from('cajas');
+			$query = $this->db->get();
+			$result = $query->result_array();
+			if(count($result) > 0){
+				$result = $query->result_array();
+				$cajaId = $result[0]['cajaId'];
+			} else {
+				return false;
+			}
+
+			$venta = array(
+				'usrId'			=> $usrId,
+				'cajaId'		=> $cajaId,
+				'srvId'			=> $srvId,
+				'cliId'			=> null
+				);
+
+			$this->db->trans_start();
+			if($this->db->insert('ventas', $venta) == false) {
+				return false;
+			} else {
+				$idVenta = $this->db->insert_id();
+				
+				//Actualizar detalle
+				foreach ($detalle as $a) {
+					$insert = array(
+							'venId' 		=> $idVenta,
+							'artId' 		=> $a['artId'],
+							'artCode' 		=> $a['artProvCode'],
+							'artDescription'=> $a['artDescripcion'],
+							'artCoste'		=> $a['artCosto'],
+							'artFinal'		=> $a['artventa'],
+							'venCant'		=> $a['srvdCant']
+						);
+
+					if($this->db->insert('ventasdetalle', $insert) == false) {
+						return false;
+					}
+
+					if($a['actualizaStock'] == 1){
+						$insert = array(
+								'artId' 		=> $a['artId'],
+								'stkCant'		=> $a['srvdCant'] * -1,
+								'stkOrigen'		=> 'VN',
+								'recId'			=> $idVenta
+							);
+
+						if($this->db->insert('stock', $insert) == false) {
+							return false;
+						}
+					}
+				}
+
+				//Insertar medios de pago
+				//**** Revisar cuando se paga en cuenta corriente 
+
+				foreach ($pago as $item) {
+					$insert = array(
+							'venId'			=>	$idVenta,
+							'medId'			=>	$item['mId'],
+							'rcbImporte'	=>	$item['imp'],
+							'rcbDesc1'		=>	$item['de1'],
+							'rcbDesc2'		=>	$item['de2'],
+							'rcbDesc3'		=>	$item['de3']
+						);
+
+					if($this->db->insert('recibos', $insert) == false) {
+						return false;
+					}
+
+					if($item['mId'] == 5){
+						//Registrar en cuenta corriente
+						$ctacte = array(
+								'cctepConcepto'		=>	'Servicio: '.$srvId ,
+								'cctepRef'			=>	$srvId,
+								'cctepTipo'			=>	'SV',
+								'cctepDebe'			=>	$item['imp'],
+								'cliId'				=> 	$cliId,
+								'usrId'				=>	$userdata[0]['usrId']
+							);
+
+						if($this->db->insert('cuentacorrientecliente', $ctacte) == false) {
+							return false;
+						}
+					}
+				}
+
+				//Actualizar orden de service
+				$update = array('srvEstado' => 'FA');
+				if($this->db->update('services', $update, array('srvId'=>$srvId)) == false) {
+					return false;
+				}
+			}
+			$this->db->trans_complete();
+		}
+
+		return true;
+	}
+	/*
 	function Sale_List(){
 		$data = array();
 		//verificar si hay cajas abiertas
@@ -265,5 +421,6 @@ class Sales extends CI_Model
 			return $venId.'.pdf';
 		}
 	}
+	*/
 }
 ?>

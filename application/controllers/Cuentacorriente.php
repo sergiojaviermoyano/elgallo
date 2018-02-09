@@ -8,6 +8,7 @@ class cuentacorriente extends CI_Controller {
 		parent::__construct();
 		$this->load->model('Cuentacorrientes');
 		$this->load->model('Providers');
+		$this->load->model('Customers');
 		$this->Users->updateSession(true);
 	}
 
@@ -27,6 +28,33 @@ class cuentacorriente extends CI_Controller {
 
 	public function setCtaCteP(){
 		$data = $this->Cuentacorrientes->setCtaCteP($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode(true);	
+		}
+	}
+
+	//Clientes
+	public function indexc($permission)
+	{
+		$data['list'] = $this->Customers->Customers_List();
+		$data['permission'] = $permission;
+		echo json_encode($this->load->view('cuentacorrientes/listc', $data, true));
+	}
+
+	public function getCtaCteC(){
+		$data['data'] = $this->Cuentacorrientes->getCtaCteC($this->input->post());
+		$response['html'] = $this->load->view('cuentacorrientes/viewc', $data, true);
+
+		echo json_encode($response);
+	}
+
+	public function setCtaCteC(){
+		$data = $this->Cuentacorrientes->setCtaCteC($this->input->post());
 		if($data  == false)
 		{
 			echo json_encode(false);

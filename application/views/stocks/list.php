@@ -208,7 +208,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modalFit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="modalFit" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">

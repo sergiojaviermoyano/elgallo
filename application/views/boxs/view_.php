@@ -23,7 +23,29 @@
       <input type="text" class="form-control" id="cajaImpVentas" value="<?php echo $data['box']['cajaImpVentas'];?>" disabled="disabled" >
     </div>
 </div><br>
-
+<?php 
+  if($data['action'] == 'Close'){
+   foreach ($data['box']['medios'] as $key => $item):?>
+         <div class="row">
+            <div class="col-xs-4"></div>
+            <div class="col-xs-2">
+              <?php echo $item['medDescripcion'];?>
+            </div>
+            <div class="col-xs-5">
+              <strong><?php echo $item['importe'];?></strong>
+            </div>
+          </div><br>   
+    <?php endforeach;
+  }
+?>
+<div class="row">
+  <div class="col-xs-4">
+      <label style="margin-top: 7px;">Retiros <strong style="color: #dd4b39">*</strong>: </label>
+    </div>
+  <div class="col-xs-5">
+      <input type="text" class="form-control" id="cajaRetiros" value="<?php echo $data['box']['cajaRetiros'];?>" disabled="disabled" >
+    </div>
+</div><br>
 <div class="row">
 	<div class="col-xs-4">
       <label style="margin-top: 7px;">Redición <strong style="color: #dd4b39">*</strong>: </label>

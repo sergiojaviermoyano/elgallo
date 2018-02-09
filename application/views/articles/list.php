@@ -6,7 +6,7 @@
         <div class="box-header">
           <h3 class="box-title">Artículos</h3>
           <?php
-          if (strpos($permission,'Add') !== false) { 
+          if (strpos($permission,'Add') !== false) {
             echo '<button class="btn btn-block btn-success" style="width: 100px; margin-top: 10px;" data-toggle="modal" onclick="LoadArt(0,\'Add\')" id="btnAdd">Agregar</button>';
           }
           ?>
@@ -17,16 +17,17 @@
               <tr>
                 <th width="15%">Acciones</th>
                 <th width="5%">Código</th>
+                <th width="5%">Cód.Prov.</th>
                 <th>Descripción</th>
                 <th width="5%">P.Costo</th>
-                <!--<th>P.Venta</th>-->
+                <th width="5%">P.Venta</th>
                 <th width="5%">Estado</th>
               </tr>
             </thead>
             <tbody>
               <?php
-                if(isset($list)) { 
-                  if(count($list) > 0)                 
+                if(isset($list)) {
+                  if(count($list) > 0)
                 	foreach($list as $a)
       		        {
   	                echo '<tr>';
@@ -42,13 +43,15 @@
                     }
   	                echo '</td>';
                     echo '<td style="text-align: center">'.$a['artBarCode'].'</td>';
+                    echo '<td style="text-align: center">'.$a['artProvCode'].'</td>';
   	                echo '<td style="text-align: left">'.$a['artDescription'].'</td>';
-                    echo '<td style="text-align: right"> $'.$a['artCoste'].'</td>';
+                    echo '<td style="text-align: right"> $'.number_format($a['artCoste'], 2, ",", ".").'</td>';
+                    echo '<td style="text-align: right"> $'.number_format(($a['artMarginIsPorcent'] ? $a['artCoste'] * ((1 + ($a['artMargin'] / 100))) : ($a['artCoste'] + $a['artMargin']) ), 2, ",", ".").'</td>';
                     echo '<td style="text-align: center">'.($a['artEstado'] == 'AC' ? '<small class="label pull-left bg-green">Activo</small>' : ($a['artEstado'] == 'IN' ? '<small class="label pull-left bg-red">Inactivo</small>' : '<small class="label pull-left bg-yellow">Suspendido</small>')).'</td>';
   	                echo '</tr>';
-                    
+
       		        }
-                  
+
                 }
               ?>
             </tbody>
@@ -86,7 +89,7 @@
 
   var idArt = 0;
   var acArt = '';
-  
+
   function LoadArt(id_, action){
   	idArt = id_;
   	acArt = action;
@@ -95,7 +98,7 @@
       $.ajax({
           	type: 'POST',
           	data: { id : id_, act: action },
-    		url: 'index.php/article/getArticle', 
+    		url: 'index.php/article/getArticle',
     		success: function(result){
 			                WaitingClose();
 			                $("#modalBodyArticle").html(result.html);
@@ -114,7 +117,7 @@
     		});
   }
 
-  
+
   $('#btnSave').click(function(){
 
   	if(acArt == 'View')
@@ -160,9 +163,9 @@
     WaitingOpen('Guardando cambios');
     	$.ajax({
           	type: 'POST',
-          	data: { 
-                    id :      idArt, 
-                    act:      acArt, 
+          	data: {
+                    id :      idArt,
+                    act:      acArt,
                     code:     $('#artBarCode').val(),
                     pcode:    $('#artProvCode').val(),
                     name:     $('#artDescription').val(),
@@ -178,7 +181,7 @@
                     arttipe:  $('#artTipo').val(),
                     det:      detail
                   },
-    		url: 'index.php/article/setArticle', 
+    		url: 'index.php/article/setArticle',
     		success: function(result){
                 			WaitingClose();
                 			$('#modalArticle').modal('hide');
@@ -200,10 +203,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel"><span id="modalAction"> </span> Artículo</h4> 
+        <h4 class="modal-title" id="myModalLabel"><span id="modalAction"> </span> Artículo</h4>
       </div>
       <div class="modal-body" id="modalBodyArticle">
-        
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -214,13 +217,13 @@
 </div>
 
 
-<!-- Modal 
+<!-- Modal
 <div class="modal fade" id="modalArticleSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document" style="width: 60%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel"><span id="modalActionSearch"> </span> Buscador de Artículo</h4> 
+        <h4 class="modal-title" id="myModalLabel"><span id="modalActionSearch"> </span> Buscador de Artículo</h4>
       </div>
       <div class="modal-body" id="modalBodyArticleSearch">
         <div class="row">
@@ -246,9 +249,9 @@
                 </tr>
               </thead>
               <tbody>
-                
+
               </tbody>
-            </table> 
+            </table>
           </div>
         </div>
       </div>
@@ -262,7 +265,7 @@
 
 <script>
 /*
-$('#artBuscadorSearch').keyup(function(e){ 
+$('#artBuscadorSearch').keyup(function(e){
     var code = e.which; // recommended to use e.which, it's normalized across browsers
     if(code==13)
       e.preventDefault();
@@ -272,7 +275,7 @@ $('#artBuscadorSearch').keyup(function(e){
         $.ajax({
               type: 'POST',
               data: { str : $(this).val() },
-          url: 'index.php/article/getArticleSingles', 
+          url: 'index.php/article/getArticleSingles',
           success: function(result){
                         $('#articlesSerched > tbody').html('');
                         var rows = '';
@@ -345,7 +348,7 @@ function restar(id){
   var cant = parseInt(cantId.html());
 
   if(cant <= 1){
-      cantId.html('1');    
+      cantId.html('1');
   } else {
     cant--;
     cantId.html(cant);

@@ -155,7 +155,10 @@
 
                   </tbody>
                   <tfoot>
-                    <th colspan="5" style="text-align: right; padding-top: 15px;"> Total: </th>
+                    <th colspan="5" style="text-align: right; padding-top: 15px;">
+                      <button type="button" class="btn btn-info" style="float: left" id="btnSrvTkt"><i class="fa fa-fw fa-list"></i></button>
+                      Total: 
+                    </th>
                     <th style="font-size:20px; text-align: right;">$ <label id="lblTotal">0.00</label></th>
                   </tfoot>
                 </table>
@@ -165,7 +168,7 @@
 
             <div class="row">
               <div class="col-xs-6">
-                <label>Observación:</label><br>
+                <label>Mecánica Ligera:</label><br>
                 <textarea id="srvObservacion" class="form-control"></textarea>
               </div>
               <div class="col-xs-6">
@@ -175,6 +178,14 @@
                   </div>
                   <div class="col-xs-3">
                     <input type="number" class="form-control" id="srvKilometros"><br>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-9" style="text-align: right; margin-top: 7px;">
+                    <label>Próximo Servicio: </label>
+                  </div>
+                  <div class="col-xs-3">
+                    <input type="number" class="form-control" id="srvKmProxService"><br>
                   </div>
                 </div>
                 <div class="row">
@@ -271,7 +282,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="modalArt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document" style="width: 60%">
+  <div class="modal-dialog" role="document" style="width:80%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -533,7 +544,6 @@ $('#lblProducto').keyup(function(e){
 });
 
 function BuscarCompleto(){
-   //buscadorArticlesNoPrice($('#lblProducto').val(), $('#prodId'), $('#lblProducto'), $('#prodCant'));
    buscadorArticlesPrice($('#lblProducto').val(), $('#prodId'), $('#lblProducto'), $('#prodCant'));
 }
 
@@ -855,8 +865,6 @@ function removeRelationalArticle(artId){
 }
 
 $('#btnManualArt').click(function(){
-  //$("[data-mask]").inputmask();
-
   LoadIconAction('modalActionManual','Add');
   $('#artMdescripcion').val('');
   $('#artMprecio').val('');
@@ -928,7 +936,34 @@ $('#btnSave').click(function(){
   if(error){
     $('#errorService').html(erroMsj +'</strong>');
     $('#modalErrorService').modal('show');
+    return;
   }
+
+  var ticket = {
+            acMotor:              $('#acMotor').prop('checked'),
+            acNombre:             $('#acNombre').val(),
+            acLitros:             $('#acLitros').val(),
+            fAire:                $('#fAire').prop('checked'),
+            fAceite:              $('#fAceite').prop('checked'),
+            fCombustible:         $('#fCombustible').prop('checked'),
+            fHabitaculo:          $('#fHabitaculo').prop('checked'),
+            agAgua:               $('#agAgua').prop('checked'),
+            cAgua:                $('#cAgua').prop('checked'),
+            aLiquiFre:            $('#aLiquiFre').prop('checked'),
+            aditivoAceite:        $('#aditivoAceite').prop('checked'),
+            aHidraulico:          $('#aHidraulico').prop('checked'),
+            aLiquidoParabrisa:    $('#aLiquidoParabrisa').prop('checked'),
+            cAceiteHidraulico:    $('#cAceiteHidraulico').prop('checked'),
+            aTransCaja:           $('#aTransCaja').prop('checked'),
+            aTransCajaLitros:     $('#aTransCajaLitros').val(),
+            aDifer:               $('#aDifer').prop('checked'),
+            aDiferLitros:         $('#aDiferLitros').val(),
+            lavado:               $('#lavado').prop('checked'),
+            lavadoCmotor:         $('#lavadoCmotor').prop('checked'),
+            lavadoMotor:          $('#lavadoMotor').prop('checked'),
+            pulido:               $('#pulido').prop('checked'),
+            otros:                $('#otros').val()
+  };
 
   WaitingOpen('Registrando Servicio');
   $.ajax({
@@ -937,8 +972,10 @@ $('#btnSave').click(function(){
               vehId: $('#idVehicle').val(),
               cliId: $('#idCliente').val(),
               kmSrv: $('#srvKilometros').val(),
+              proxS: $('#srvKmProxService').val(),
               comen: $('#srvObservacion').val(),
-              detal: detalle
+              detal: detalle, 
+              tickt: ticket
             },
   url: 'index.php/service/setService', 
   success: function(result){
@@ -979,6 +1016,10 @@ $('#btnHistorial').click(function(){
           dataType: 'json'
       });
 });
+
+$('#btnSrvTkt').click(function(){
+  $("#modalSrvTkt").modal('show');
+});
 </script>
 
 <!-- Modal -->
@@ -994,6 +1035,137 @@ $('#btnHistorial').click(function(){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" onclick="closeView()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalSrvTkt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document" style="width: 80%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" ><span><i class="fa fa-fw fa-list" style="color: #3c8dbc;"></i> </span> Servicio Detallado</h4> 
+      </div>
+      <div class="modal-body" id="modalBodySrvTkt">
+        <div class="row">
+          <div class="col-xs-6">
+            <!--Lubricentro -->
+            <label>Lubricentro</label><br>
+            <table style="display: table;" class="table table-bordered" width="100%">
+              <tr>
+                <td width="50%" style="vertical-align:middle">Aceite/Motor</td>
+                <td style="vertical-align:middle">
+                  <div class="row">
+                    <div class="col-xs-1" >
+                      <input type="checkbox" id="acMotor" style="margin-top: 12px">
+                    </div>
+                    <div class="col-xs-6">
+                      <input type="text" id="acNombre" placeholder="Nombre" class="form-control">
+                    </div>
+                    <div class="col-xs-4">
+                      <input type="text" id="acLitros" placeholder="Litros" class="form-control">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Filtro/Aire</td>
+                <td><input type="checkbox" id="fAire"></td>
+              </tr>
+              <tr>
+                <td>Filtro/Aceite</td>
+                <td><input type="checkbox" id="fAceite"></td>
+              </tr>
+              <tr>
+                <td>Filtro/Combustible</td>
+                <td><input type="checkbox" id="fCombustible"></td>
+              </tr>
+              <tr>
+                <td>Filtro/Habitáculo</td>
+                <td><input type="checkbox" id="fHabitaculo"></td>
+              </tr>
+              <tr>
+                <td>Agregado de Agua</td>
+                <td><input type="checkbox" id="agAgua"></td>
+              </tr>
+              <tr>
+                <td>Cambio/Agua y Aditivo</td>
+                <td><input type="checkbox" id="cAgua"></td>
+              </tr>
+              <tr>
+                <td>Agregado/Liquido de Freno</td>
+                <td><input type="checkbox" id="aLiquiFre"></td>
+              </tr>
+              <tr>
+                <td>Aditivo de Aceite</td>
+                <td><input type="checkbox" id="aditivoAceite"></td>
+              </tr>
+              <tr>
+                <td>Agregado/Aceite Hidráulico</td>
+                <td><input type="checkbox" id="aHidraulico"></td>
+              </tr>
+              <tr>
+                <td>Agregado Liquido Limpia Parabrisas</td>
+                <td><input type="checkbox" id="aLiquidoParabrisa"></td>
+              </tr>
+              <tr>
+                <td>Cambio/Aceite Hiráulico</td>
+                <td><input type="checkbox" id="cAceiteHidraulico"></td>
+              </tr>
+              <tr>
+                <td style="vertical-align:middle">Aceite/Transmisión</td>
+                <td>
+                  <table style="display: table;" class="table table-bordered" width="100%">
+                    <tr>
+                      <td style="vertical-align:middle">Caja</td>
+                      <td style="vertical-align:middle"><input type="checkbox" id="aTransCaja"></td>
+                      <td><input type="text" id="aTransCajaLitros" placeholder="Litros" class="form-control"></td>
+                    </tr>
+                    <tr>
+                      <td style="vertical-align:middle">Diferencial</td>
+                      <td style="vertical-align:middle"><input type="checkbox" id="aDifer"></td>
+                      <td><input type="text" id="aDiferLitros" placeholder="Litros" class="form-control"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+
+          <!--Lavadero -->
+          <div class="col-xs-6">
+            <label>Lavadero</label>
+            <table style="display: table;" class="table table-bordered" width="100%">
+              <tr>
+                <td width="50%">Lavado</td>
+                <td><input type="checkbox" id="lavado"></td>
+              </tr>
+              <tr>
+                <td>Lavado con Motor</td>
+                <td><input type="checkbox" id="lavadoCmotor"></td>
+              </tr>
+              <tr>
+                <td>Lavado Motor</td>
+                <td><input type="checkbox" id="lavadoMotor"></td>
+              </tr>
+              <tr>
+                <td>Pulido</td>
+                <td><input type="checkbox" id="pulido"></td>
+              </tr>
+            </table> <br>
+
+            <label>Mecanica</label><br>
+
+            Otros<br>
+            <textarea class="form-control" id="otros"></textarea>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

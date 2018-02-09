@@ -13,7 +13,7 @@
     </div>
 	<div class="col-xs-4">
     <select class="form-control select2" id="prvId" style="width: 100%;" <?php echo ($data['read'] == true ? 'disabled="disabled"' : '');?> >
-      <?php 
+      <?php
         echo '<option value="-1"></option>';
         foreach ($data['providers'] as $p) {
           echo '<option value="'.$p['prvId'].'" '.($data['reception']['prvId'] == $p['prvId'] ? 'selected' : '').'>'.$p['prvRazonSocial'].' ('.$p['prvApellido'].' '.$p['prvNombre'].')</option>'; //data-balance="'.$c['balance'].'" data-address="'.$c['cliAddress'].'" data-dni="'.$c['cliDni'].'"
@@ -28,7 +28,7 @@
 
     <div class="col-xs-3">
     <select class="form-control select2" id="tcId" style="width: 100%;" <?php echo ($data['read'] == true ? 'disabled="disabled"' : '');?> >
-      <?php 
+      <?php
         echo '<option value="-1"></option>';
         foreach ($data['tipe'] as $t) {
           echo '<option value="'.$t['tcId'].'" '.($data['reception']['tcId'] == $t['tcId'] ? 'selected' : '').'>'.$t['tcDescripcion'].'</option>'; //data-balance="'.$c['balance'].'" data-address="'.$c['cliAddress'].'" data-dni="'.$c['cliDni'].'"
@@ -78,7 +78,7 @@
       <label style="margin-top: 7px;">Producto: </label>
     </div>
   <div class="col-xs-5">
-      <input type="hidden" id="idRec" value=""> 
+      <input type="hidden" id="idRec" value="">
       <input type="text" class="form-control" id="artIdRec" value="" <?php echo ($data['read'] == true ? 'disabled="disabled"' : '');?> >
     </div>
   <div class="col-xs-2">
@@ -90,7 +90,7 @@
 </div><br>
 
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
+  <div class="col-xs-10 col-xs-offset-1" style="max-height: 230px; overflow: auto;">
     <table id="saleDetail" class="table table-bordered">
       <thead>
         <tr>
@@ -133,10 +133,10 @@
       WaitingOpen('Agregando producto');
       $.ajax({
             type: 'POST',
-            data: { 
+            data: {
                     id : $('#idRec').val()
                   },
-            url: 'index.php/article/getArticleJson', 
+            url: 'index.php/article/getArticleJson',
             success: function(result){
                           html = '<tr id="'+rowY+'">';
                           html+= '<td style="text-align: center" onclick="delete_('+rowY+')"><i class="fa fa-fw fa-close" style="color: #dd4b39"></i></td>';
@@ -162,7 +162,7 @@
   });
 
   $('#btnSave').click(function(){
-    
+
     if(acMachine == 'View')
     {
       $('#modalBox').modal('hide');
@@ -189,7 +189,7 @@
         default: hayError = true;
       }
     }
-    
+
 
     if(hayError == true){
       $('#error').fadeIn('slow');
@@ -200,14 +200,14 @@
     WaitingOpen('Guardando cambios');
       $.ajax({
             type: 'POST',
-            data: { 
-                    id : id, 
-                    act: action, 
+            data: {
+                    id : id,
+                    act: action,
                     ape: $('#cajaImpApertura').val(),
                     ven: $('#cajaImpVentas').val(),
                     cie: $('#cajaImpRendicion').val()
                   },
-        url: 'index.php/box/setBox', 
+        url: 'index.php/box/setBox',
         success: function(result){
                       WaitingClose();
                       $('#modalBox').modal('hide');
@@ -222,7 +222,7 @@
   });
 
   $('#artIdRec').keyup(function(e){
-    var code = e.which; 
+    var code = e.which;
     if(code==13){
       e.preventDefault();
       BuscarCompleto();
@@ -230,7 +230,7 @@
   });
 
   $('#artCantRec').keyup(function(e) {
-  var code = e.which; 
+  var code = e.which;
   if(code==13){
     if(parseFloat($('#artCantRec').val()) > 0){
       $('#btnAddProdRec').focus();

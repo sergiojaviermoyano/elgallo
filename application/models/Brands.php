@@ -7,15 +7,15 @@ class Brands extends CI_Model
 	{
 		parent::__construct();
 	}
-	
+
 	function Brand_list(){
 		$this->db->from('marcaart');
 		$this->db->order_by('descripcion', 'asc');
-		$query = $this->db->get(); 
-		
+		$query = $this->db->get();
+
 		if ($query->num_rows()!=0)
 		{
-			return $query->result_array();	
+			return $query->result_array();
 		}
 		else
 		{
@@ -56,7 +56,7 @@ class Brands extends CI_Model
 			}
 			$data['read'] = $readonly;
 			$data['action'] = $action;
-			
+
 			return $data;
 		}
 	}
@@ -71,33 +71,33 @@ class Brands extends CI_Model
 			$id 	= $data['id'];
             $act 	= $data['act'];
             $name 	= $data['name'];
-            
+
 			$data = array(
 				   'descripcion' 				=> $name
 				);
 
 			switch($act){
 				case 'Add':
-					//Agregar Marca 
+					//Agregar Marca
 					if($this->db->insert('marcaart', $data) == false) {
 						return false;
-					} 
+					}
 					break;
-				
+
 				 case 'Edit':
 				 	//Actualizar marca
 				 	if($this->db->update('marcaart', $data, array('id'=>$id)) == false) {
 				 		return false;
 				 	}
 				 	break;
-					
+
 				 case 'Del':
 				 	//Eliminar Marca
 				 	if($this->db->delete('marcaart', array('id'=>$id)) == false) {
 				 		return false;
 				 	}
 				 	break;
-				 	
+
 			}
 			return true;
 
@@ -108,15 +108,112 @@ class Brands extends CI_Model
 		$this->db->from('marcaveh');
 		$this->db->order_by('marDescripcion', 'asc');
 		$this->db->where(array('marEstado' => 'AC'));
-		$query = $this->db->get(); 
-		
+		$query = $this->db->get();
+
 		if ($query->num_rows()!=0)
 		{
-			return $query->result_array();	
+			return $query->result_array();
 		}
 		else
 		{
 			return false;
 		}
 	}
+
+	function BrandVh_list(){
+		$this->db->from('marcaveh');
+		$this->db->order_by('marDescripcion', 'asc');
+		$query = $this->db->get();
+
+		if ($query->num_rows()!=0)
+		{
+			return $query->result_array();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	function getBrandVh($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$action = $data['act'];
+			$idBrand = $data['id'];
+			$data = array();
+
+			//Datos de la marca
+			$query= $this->db->get_where('marcaveh',array('marId'=>$idBrand));
+			if ($query->num_rows() != 0)
+			{
+				$c = $query->result_array();
+				$data['brand'] = $c[0];
+
+			} else {
+				$bra = array();
+				$bra['id'] = '';
+				$bra['marDescripcion'] = '';
+				$data['brand'] = $bra;
+			}
+			$data['brand']['action'] = $action;
+
+			//Readonly
+			$readonly = false;
+			if($action == 'Del' || $action == 'View'){
+				$readonly = true;
+			}
+			$data['read'] = $readonly;
+			$data['action'] = $action;
+
+			return $data;
+		}
+	}
+
+	function setBrandVh($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$id 	= $data['id'];
+            $act 	= $data['act'];
+            $name 	= $data['name'];
+
+			$data = array(
+				   'marDescripcion' 				=> $name
+				);
+
+			switch($act){
+				case 'Add':
+					//Agregar Marca
+					if($this->db->insert('marcaveh', $data) == false) {
+						return false;
+					}
+					break;
+
+				 case 'Edit':
+				 	//Actualizar marca
+				 	if($this->db->update('marcaveh', $data, array('marId'=>$id)) == false) {
+				 		return false;
+				 	}
+				 	break;
+
+				 case 'Del':
+				 	//Eliminar Marca
+				 	if($this->db->delete('marcaveh', array('marId'=>$id)) == false) {
+				 		return false;
+				 	}
+				 	break;
+
+			}
+			return true;
+
+		}
+	}
+
 }

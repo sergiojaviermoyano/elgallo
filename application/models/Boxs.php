@@ -11,7 +11,7 @@ class Boxs extends CI_Model
 	function Box_List($data_ = null){
 		$data = array();
 		if($data_ == null){
-			$this->db->select('cajas.*, sisusers.usrName, sisusers.usrLastName');
+			$this->db->select('cajas.*, sisusers.usrName, sisusers.usrLastName, (select sum(retImporte) from retiros where cajaId = cajas.cajaId) as retiro');
 			$this->db->from('cajas');
 			$this->db->join('sisusers', ' sisusers.usrId = cajas.usrId');
 			$this->db->order_by('cajas.cajaId', 'desc');
@@ -22,7 +22,7 @@ class Boxs extends CI_Model
 			$data['totalPage'] = ceil($this->db->count_all_results('cajas') / 10);
 			$data['data'] = $query->result_array();
 		} else {
-			$this->db->select('cajas.*, sisusers.usrName, sisusers.usrLastName');
+			$this->db->select('cajas.*, sisusers.usrName, sisusers.usrLastName, (select sum(retImporte) from retiros where cajaId = cajas.cajaId) as retiro');
 			$this->db->from('cajas');
 			$this->db->join('sisusers', ' sisusers.usrId = cajas.usrId');
 			$this->db->order_by('cajas.cajaId', 'desc');
@@ -79,6 +79,29 @@ class Boxs extends CI_Model
 				//var_dump($query->row());
 				$c[0]['cajaImpVentas'] = $query->row()->suma == null ? '0.00' : $query->row()->suma;
 				$data['box'] = $c[0];
+
+				//Calcular retiros
+				$this->db->select('sum(retImporte) as suma', false);
+				$this->db->from('retiros');
+				$this->db->where(array('cajaId'=>$idBox));
+				$query = $this->db->get();
+				$data['box']['cajaRetiros'] = $query->row()->suma == null ? '0.00' : $query->row()->suma;
+
+				//calcular ventas
+				$this->db->select('sum(ventasdetalle.artFinal * ventasdetalle.venCant) as suma', false);
+				$this->db->from('ventasdetalle');
+				$this->db->join('ventas', 'ventas.venId = ventasdetalle.venId');
+				$this->db->where(array('ventas.cajaId'=>$idBox, 'ventas.venEstado' => 'AC'));
+				$query = $this->db->get();
+				$data['box']['cajaImpVentas'] = $query->row()->suma == null ? '0.00' : $query->row()->suma;
+
+				$query = $this->db->query('select r.medId, m.medDescripcion, sum(r.rcbImporte) as importe from recibos as r 
+										  join ventas as v on v.venId = r.venId
+										  join mediosdepago as m on m.medId = r.medId
+										  where v.cajaId = '.$idBox.'
+										  GROUP BY r.medId');
+
+				$data['box']['medios'] = $query->result_array();
 			} else {
 				$userdata = $this->session->userdata('user_data');
 
@@ -88,12 +111,14 @@ class Boxs extends CI_Model
 				$box['cajaImpApertura'] = '';
 				$box['cajaImpVentas'] = '0.00';
 				$box['cajaImpRendicion'] = '0.00';
+				$box['cajaRetiros'];
 
 				$box['usrId'] = $userdata[0]['usrId'];
 				$box['usrName'] = $userdata[0]['usrName'];
 				$box['usrLastName'] = $userdata[0]['usrLastName'];
 
 				$data['box'] = $box;
+				$data['box']['medios'] = array();
 			}
 
 			$data['action'] = $action;
@@ -150,6 +175,52 @@ class Boxs extends CI_Model
 			return true;
 
 		}
+	}
+
+	function setRetiro($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$imp = $data['imp'];
+			$des = $data['des'];
+
+			$userdata = $this->session->userdata('user_data');
+			
+			$this->db->select('cajaId');
+			$this->db->from('cajas');
+			$this->db->where('cajaCierre', null);
+			$query= $this->db->get();
+			if ($query->num_rows() != 0)
+			{
+				$c = $query->result_array();
+
+				$data = array(
+					   'usrId'			=> $userdata[0]['usrId'],
+					   'retImporte'		=> $imp,
+					   'retDescripcion'	=> $des,
+					   'cajaId'			=> $c[0]['cajaId']
+					);
+
+				if($this->db->insert('retiros', $data) == false) {
+						return false;
+				}
+			} else 
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
+	
+	function isOpenBox(){
+		//verificar si hay cajas abiertas
+		$this->db->where('cajaCierre', null);
+		$this->db->from('cajas');
+		return $this->db->count_all_results();
 	}
 }
 ?>

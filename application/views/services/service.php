@@ -109,6 +109,12 @@
         <div class="col-xs-4" style="margin-top: 7px;">
           <label><?php echo number_format($data['servicio']['srvKm'], 0, ",", ".");?></label>
         </div>
+        <div class="col-xs-2" style="margin-top: 7px;">
+          Próx Servicio:
+        </div> 
+        <div class="col-xs-4" style="margin-top: 7px;">
+          <label><?php echo number_format($data['servicio']['srvKmProxService'], 0, ",", ".");?></label>
+        </div>
       </div>
     </div>
   </div>
@@ -116,12 +122,12 @@
 
     <div class="row">
       <div class="col-xs-12">
-        <table id="tableService" style="display: table;" class="table table-bordered" width="100%">
+        <table style="display: table;" class="table table-bordered" width="100%">
           <thead>
             <th>Descripción</th>
             <th style="width: 10%">Cantidad</th>
             <th style="width: 10%">Precio</th>
-            <th style="width: 10%">Total</th>
+            <th style="width: 15%">Total</th>
           </thead>
           <tbody>
           <?php
@@ -148,21 +154,9 @@
 
     <div class="row">
       <div class="col-xs-12">
-        Observación:<br>
+        Mecánica Ligera:<br>
         <label><?php echo $data['servicio']['srvObservacion'];?></label>
       </div>
-      <!--
-      <div class="col-xs-6">
-        <div class="row">
-          <div class="col-xs-9" style="text-align: right;">
-            Kilometros al momento del Servicio:
-          </div>
-          <div class="col-xs-3">
-            <label><?php ;?></label>
-          </div>
-        </div>
-      </div>
-      -->
     </div>
 
 </div>

@@ -7,17 +7,17 @@ class Articles extends CI_Model
 	{
 		parent::__construct();
 	}
-	
+
 	function Articles_List(){
 
 		$query= $this->db->get('articles');
-		
+
 		if ($query->num_rows()!=0)
 		{
-			return $query->result_array();	
+			return $query->result_array();
 		}
 		else
-		{	
+		{
 			return array();
 		}
 	}
@@ -41,8 +41,8 @@ class Articles extends CI_Model
 			return $data;
 		}
 	}
-	
-	
+
+
 	function getArticle($data = null){
 		if($data == null)
 		{
@@ -115,9 +115,9 @@ class Articles extends CI_Model
 			$query= $this->db->get();
 			if ($query->num_rows() != 0)
 			{
-				$data['subrubros'] = $query->result_array();	
+				$data['subrubros'] = $query->result_array();
 			}
-		
+
 			//Marcas
 			$this->db->select('');
 			$this->db->from('marcaart');
@@ -125,16 +125,16 @@ class Articles extends CI_Model
 			$query= $this->db->get();
 			if ($query->num_rows() != 0)
 			{
-				$data['marcas'] = $query->result_array();	
+				$data['marcas'] = $query->result_array();
 			}
 
 			$data['read'] = $readonly;
 			$data['action'] = $action;
-			
+
 			return $data;
 		}
 	}
-	
+
 	function setArticle($data = null){
 		if($data == null)
 		{
@@ -174,12 +174,12 @@ class Articles extends CI_Model
 				   'artProvCode'					=> $pcode,
 				   'artMinimo'						=> $min,
 				   'artMedio'						=> $med,
-				   'artMaximo'						=> $max				   
+				   'artMaximo'						=> $max
 				);
 
 			switch($act){
 				case 'Add':
-					//Agregar Artículo 
+					//Agregar Artículo
 					$this->db->trans_start();
 					if($this->db->insert('articles', $data) == false) {
 						return false;
@@ -194,12 +194,12 @@ class Articles extends CI_Model
 								);
 							if($this->db->insert('articulosdetalle', $detail) == false) {
 								return false;
-							} 
+							}
 						}
 					}
 					$this->db->trans_complete();
 					break;
-				
+
 				 case 'Edit':
 				 	//Actualizar Artículo
 				 	$this->db->trans_start();
@@ -217,13 +217,13 @@ class Articles extends CI_Model
 									);
 								if($this->db->insert('articulosdetalle', $detail) == false) {
 									return false;
-								} 
+								}
 							}
 						}
 				 	}
 				 	$this->db->trans_complete();
 				 	break;
-					
+
 				 case 'Del':
 				 	//Eliminar Artículo
 				 	$this->db->trans_start();
@@ -236,7 +236,7 @@ class Articles extends CI_Model
 					 }
 				 	$this->db->trans_complete();
 				 	break;
-				 	
+
 			}
 			return true;
 
@@ -253,7 +253,7 @@ class Articles extends CI_Model
 
 		$this->db->select('artId, artDescription, artBarcode');
 		$this->db->from('articles');
-		$this->db->like('artDescription', $str, 'both'); 
+		$this->db->like('artDescription', $str, 'both');
 		$this->db->where(array('artEsSimple' => 1, 'artEstado'=>'AC'));
 		$query = $this->db->get();
 		if ($query->num_rows()!=0)
@@ -264,7 +264,7 @@ class Articles extends CI_Model
 
 		return array();
 	}
-	
+
 	function buscadorArticlesNoPrice($data = null){
 		$str = '';
 		if($data != null){
@@ -275,9 +275,9 @@ class Articles extends CI_Model
 
 		$this->db->select('artId, artDescription, artBarcode');
 		$this->db->from('articles');
-		$this->db->like('artDescription', $str, 'both'); 
-		$this->db->or_like('artBarCode', $str, 'both'); 
-		$this->db->or_like('artProvCode', $str, 'both'); 
+		$this->db->like('artDescription', $str, 'both');
+		$this->db->or_like('artBarCode', $str, 'both');
+		$this->db->or_like('artProvCode', $str, 'both');
 		$this->db->where(array('artEstado'=>'AC'));
 		$query = $this->db->get();
 		if ($query->num_rows()!=0)
@@ -299,9 +299,9 @@ class Articles extends CI_Model
 
 		$this->db->select('artId, artDescription, artBarcode, artCoste, artMargin, artMarginIsPorcent');
 		$this->db->from('articles');
-		$this->db->like('artDescription', $str, 'both'); 
-		$this->db->or_like('artBarCode', $str, 'both'); 
-		$this->db->or_like('artProvCode', $str, 'both'); 
+		$this->db->like('artDescription', $str, 'both');
+		$this->db->or_like('artBarCode', $str, 'both');
+		$this->db->or_like('artProvCode', $str, 'both');
 		$this->db->where(array('artEstado'=>'AC'));
 		$query = $this->db->get();
 		if ($query->num_rows()!=0)
@@ -312,47 +312,7 @@ class Articles extends CI_Model
 
 		return array();
 	}
-	/*
-	function searchByCode($data = null){
-		$str = '';
-		if($data != null){
-			$str = $data['code'];
-		}
 
-		$articles = array();
-
-		$this->db->select('*');
-		$this->db->from('articles');
-		$this->db->where(array('artBarCode'=>$str, 'artEstado'=>'AC')); 
-		$query = $this->db->get();
-		if ($query->num_rows()!=0)
-		{
-			if($query->num_rows() > 1){
-				//Multiples coincidencias
-			} else {
-				//Unica coincidencia
-				$a = $query->result_array();
-				$articles = $a[0];
-
-				//Calcular precios 
-				$pUnit = $articles['artCoste'];
-				if($articles['artIsByBox'] == 1){
-					$pUnit = $articles['artCoste'] / $articles['artCantBox'];
-				}
-
-				if($articles['artMarginIsPorcent'] == 1){
-					$articles['pVenta'] = $pUnit + ($pUnit * ($articles['artMargin'] / 100));
-				} else {
-					$articles['pVenta'] = $pUnit + $articles['artMargin'];
-				}
-
-			}
-			return $articles;
-		}
-
-		return $articles;
-	}
-*/
 	function searchByAll($data = null){
 		$str = '';
 		if($data != null){
@@ -375,7 +335,7 @@ class Articles extends CI_Model
 			foreach($query->result_array() as $a){
 				$articles = $a;
 
-				//Calcular precios 
+				//Calcular precios
 				$pUnit = $articles['artCoste'];
 
 				if($articles['artMarginIsPorcent'] == 1){
@@ -390,6 +350,62 @@ class Articles extends CI_Model
 
 		return $art;
 	}
-	
+
+	function searchByCode($data = null){
+		$str = '';
+		if($data != null){
+			$str = $data['code'];
+		}
+
+		$art = array();
+		$this->db->select('*');
+		$this->db->from('articles');
+		$this->db->where(array('artEstado' =>'AC', 'artBarCode' => $str));
+
+		$query = $this->db->get();
+		if ($query->num_rows()!=0)
+		{
+			$arts = $query->result_array();
+			$arts = $arts[0];
+
+			//Calcular precio
+			$pUnit = $arts['artCoste'];
+
+			if($arts['artMarginIsPorcent'] == 1){
+				$arts['pVenta'] = $pUnit + ($pUnit * ($arts['artMargin'] / 100));
+			} else {
+				$arts['pVenta'] = $pUnit + $arts['artMargin'];
+			}
+			$art = $arts;
+		}
+
+		return $art;
+	}
+
+	public function update_prices_by_rubro($data){
+
+
+		if(isset($data['artMarginIsPorcent'])){
+			$this->db->set('artCoste','artCoste + ( (artCoste*'.$data['incrementValue'].') /100)',FALSE);
+		}else{
+			$this->db->set('artCoste','artCoste +'.$data['incrementValue'].'',FALSE);
+		}
+
+
+		if($data['subrId']==''){
+			$this->db->select('subrId')->where('rubId',$data['rubId'])->from('subrubros');
+			$subQuery =  $this->db->get_compiled_select();
+			$this->db->where("subrId IN (".$subQuery.")", NULL, FALSE);
+		}else{
+			$this->db->where('subrId',$data['subrId']);
+		}
+
+		if($this->db->update("articles")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 }
 ?>

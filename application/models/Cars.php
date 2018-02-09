@@ -66,7 +66,7 @@ class Cars extends CI_Model
 
 			$this->db->select('
 								vehiculo_articulo.vehartCant, 
-								articles.artId, articles.artDescription, articles.artBarCode, articles.artCoste, 
+								articles.artId, articles.artDescription, articles.artBarCode, articles.artCoste, articles.artProvCode,
 								Case
 									When articles.artMarginIsPorcent = 1 then (articles.artCoste * (1 + (articles.artMargin / 100)))
 									When articles.artMarginIsPorcent = 0 then (articles.artCoste + articles.artMargin)

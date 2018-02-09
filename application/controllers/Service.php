@@ -41,4 +41,8 @@ class service extends CI_Controller {
 		$response['html'] = $this->load->view('services/service', $data, true);
 		echo json_encode($response);
 	}
+
+	public function printTicket(){
+		echo json_encode($this->Services->printTicket($this->input->post()));
+	}
 }
