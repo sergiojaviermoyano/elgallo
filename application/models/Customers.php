@@ -166,5 +166,24 @@ class Customers extends CI_Model
 			}
 		}
 	}	
+
+	function Customers_List_Single(){
+
+		$this->db->order_by('cliApellido','asc');
+		$this->db->order_by('cliNombre','asc');
+		$this->db->select('*');
+		$this->db->from('clientes');
+		$this->db->where(array('cliEstado' => 'AC'));
+		$query= $this->db->get();
+		
+		if ($query->num_rows()!=0)
+		{
+			return $query->result_array();	
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
 ?>

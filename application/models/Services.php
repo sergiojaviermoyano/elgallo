@@ -60,10 +60,32 @@ class Services extends CI_Model
 
 					//
 					if($item['artId'] > -1){
+						//Evaluar si el producto es simple o cumpuesto
+						$query = $this->db->get_where('articulosdetalle', array('artId' => $item['artId']));
+						$result = $query->result_array();
+						if(count($result) > 0){
+							//Producto Compuesto
+							foreach ($result as $item_) {
+								$insert = array(
+									'artId' 		=> $item_['artId_'],
+									'stkCant'		=> $item_['artDetCantidad'] * -1 * $item['srvdCant'],
+									'stkOrigen'		=> 'SV',
+									'recId'			=> $idSrv
+								);
+
+								if($this->db->insert('stock', $insert) == false) {
+									return false;
+								}
+								
+							}
+
+						} 
+
 						$insert = array(
 								'artId' 		=> $item['artId'],
 								'stkCant'		=> ($item['srvdCant'] * -1),
-								'stkOrigen'		=> 'SV'
+								'stkOrigen'		=> 'SV',
+								'recId'			=> $idSrv
 							);
 
 							if($this->db->insert('stock', $insert) == false) {
@@ -205,7 +227,7 @@ class Services extends CI_Model
 		{
 			$result = $this->getServiceId($data);
 
-			$html = '<table width="100%" style="font-family: Impact, Charcoal, sans-serif; font-size: 14px;">';
+			$html = '<table width="100%" style="font-family: Impact, Charcoal, sans-serif; font-size: 15px;">';
 			$html .= '	<tr>
 							<td width="10%">
 								<img src="./assets/images/logo.png">
@@ -365,5 +387,16 @@ class Services extends CI_Model
 			//----------------------------------------
 			return $data['id'].'.pdf';
 		}
+	}
+
+	function getList(){
+		$this->db->select('srvId, srvFecha, srvKm, srvEstado, vehiculos.*, marcaveh.marDescripcion');
+		$this->db->from('services');
+		$this->db->join('vehiculos', 'vehiculos.vehId = services.vehId');
+		$this->db->join('marcaveh', 'marcaveh.marId = vehiculos.marId');
+		$this->db->order_by('srvFecha', 'desc');
+		$query = $this->db->get();
+
+		return $query->result_array();
 	}
 }

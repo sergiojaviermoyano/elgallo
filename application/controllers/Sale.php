@@ -9,6 +9,7 @@ class sale extends CI_Controller {
 		$this->load->model('Sales');
 		$this->load->model('Services');
 		$this->load->model('Lists');
+		$this->load->model('Customers');
 		$this->Users->updateSession(true);
 	}
 
@@ -37,6 +38,13 @@ class sale extends CI_Controller {
 			echo json_encode(true);	
 		}
 	}
+
+	public function add()
+	{
+		$data['customers'] = $this->Customers->Customers_List_Single();
+		$data['lists'] = $this->Lists->List_List();
+		echo json_encode($this->load->view('sales/add', $data, true));
+	}
 	/*
 	public function index($permission)
 	{
@@ -44,7 +52,7 @@ class sale extends CI_Controller {
 		$data['permission'] = $permission;
 		echo json_encode($this->load->view('sales/list', $data, true));
 	}
-	
+		
 	public function getSale(){
 		$data['data'] = $this->Sales->getSale($this->input->post());
 		$response['html'] = $this->load->view('sales/detail_', $data, true);

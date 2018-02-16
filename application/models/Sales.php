@@ -78,8 +78,8 @@ class Sales extends CI_Model
 			$venta = array(
 				'usrId'			=> $usrId,
 				'cajaId'		=> $cajaId,
-				'srvId'			=> $srvId,
-				'cliId'			=> null
+				'srvId'			=> $srvId == -1 ? null : $srvId,
+				'cliId'			=> $srvId == -1 ? $cliId : null
 				);
 
 			$this->db->trans_start();
@@ -105,12 +105,34 @@ class Sales extends CI_Model
 					}
 
 					if($a['actualizaStock'] == 1){
+						//Evaluar si el producto es simple o cumpuesto
+						$query = $this->db->get_where('articulosdetalle', array('artId' => $a['artId']));
+						$result = $query->result_array();
+						if(count($result) > 0){
+							//Producto Compuesto
+							foreach ($result as $item) {
+								$insert = array(
+									'artId' 		=> $item['artId_'],
+									'stkCant'		=> $item['artDetCantidad'] * -1 * $a['srvdCant'],
+									'stkOrigen'		=> 'VN',
+									'recId'			=> $idVenta
+								);
+
+								if($this->db->insert('stock', $insert) == false) {
+									return false;
+								}
+								
+							}
+
+						} 
+
+						//Producto Simple
 						$insert = array(
-								'artId' 		=> $a['artId'],
-								'stkCant'		=> $a['srvdCant'] * -1,
-								'stkOrigen'		=> 'VN',
-								'recId'			=> $idVenta
-							);
+							'artId' 		=> $a['artId'],
+							'stkCant'		=> $a['srvdCant'] * -1,
+							'stkOrigen'		=> 'VN',
+							'recId'			=> $idVenta
+						);
 
 						if($this->db->insert('stock', $insert) == false) {
 							return false;
@@ -138,9 +160,9 @@ class Sales extends CI_Model
 					if($item['mId'] == 5){
 						//Registrar en cuenta corriente
 						$ctacte = array(
-								'cctepConcepto'		=>	'Servicio: '.$srvId ,
-								'cctepRef'			=>	$srvId,
-								'cctepTipo'			=>	'SV',
+								'cctepConcepto'		=>	$srvId > -1 ? 'Servicio: '.$srvId: 'Venta: '.$idVenta ,
+								'cctepRef'			=>	$srvId > -1 ? $srvId : $idVenta,
+								'cctepTipo'			=>	$srvId > -1 ? 'SV' : 'VN',
 								'cctepDebe'			=>	$item['imp'],
 								'cliId'				=> 	$cliId,
 								'usrId'				=>	$userdata[0]['usrId']
@@ -153,9 +175,11 @@ class Sales extends CI_Model
 				}
 
 				//Actualizar orden de service
-				$update = array('srvEstado' => 'FA');
-				if($this->db->update('services', $update, array('srvId'=>$srvId)) == false) {
-					return false;
+				if($srvId > -1){
+					$update = array('srvEstado' => 'FA');
+					if($this->db->update('services', $update, array('srvId'=>$srvId)) == false) {
+						return false;
+					}
 				}
 			}
 			$this->db->trans_complete();

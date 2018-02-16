@@ -11,6 +11,17 @@
         <!-- /.info-box-content -->
       </div>
       <!-- /.info-box -->
+
+      <div class="info-box" style="cursor: pointer" onClick="AgregarVenta()">
+        <span class="info-box-icon bg-aqua"><i class="fa fa-fw fa-cart-plus"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">Agregar</span>
+          <span class="info-box-number">Venta</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+
     </div>
 
     <!---_-->
@@ -92,6 +103,7 @@
                 }
               ?>
             </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -169,6 +181,28 @@ function CobrarService(srvId){
 
                     } else {
                       cargarView('sale', 'cobrar', srvId);
+                    }
+            },
+      error: function(result){
+            WaitingClose();
+            ProcesarError(result.responseText, 'noModal');
+          },
+          dataType: 'json'
+      });
+}
+
+function AgregarVenta(){
+  WaitingOpen('Espere...');
+  $.ajax({
+          type: 'POST',
+          data: null,
+      url: 'index.php/box/isOpenBox',
+      success: function(result){
+                    WaitingClose();
+                    if(result == 0){
+
+                    } else {
+                      cargarView('sale', 'add', '');
                     }
             },
       error: function(result){

@@ -64,6 +64,10 @@
                     case 'CV':
                               echo 'Anulación Venta';
                               break;
+
+                    case 'VN':
+                              echo 'Venta';
+                              break;
                   }
                   echo '</tr>';
                 }

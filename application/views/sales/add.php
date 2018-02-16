@@ -3,11 +3,9 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">Cobranza de Servicio</h3>
+          <h3 class="box-title">Nueva Venta</h3>
         </div><!-- /.box-header -->
         <div class="box-body">
-        <!-- Id del Service -->
-        <input type="hidden" id="idServ__" value="<?php echo $service['servicio']['srvId'];?>">
         	<div class="row">
         		<!-- Lista de Precios y Cliente -->
         		<div class="col-xs-6">
@@ -26,100 +24,17 @@
         			</div><br>
         			<!-- Cliente -->
         			<div class="row">
-        				<div class="col-xs-12">
-	        				<div class="box box-info box-solid">
-					            <div class="box-header with-border">
-					              <h3 class="box-title">Cliente</h3>
-					              <!-- /.box-tools -->
-					            </div>
-					            <!-- /.box-header -->
-					            <div class="box-body">
-					              <div class="row">
-					              	<div class="col-xs-2">
-					              		Cliente: <input type="hidden" id="cliId__" value="<?php echo $service['vehiculo']['cliente']['cliId'];?>">
-					              	</div>
-					              	<div class="col-xs-10">
-					        			<label>
-					        				<?php echo $service['vehiculo']['cliente']['cliNombre'] . ' ' .
-					        							$service['vehiculo']['cliente']['cliApellido']
-					        				?>
-					        			</label>
-					        		</div>
-					              </div>
-					              <div class="row">
-						        		<div class="col-xs-2">
-					        				DNI:
-						        		</div>
-						        		<div class="col-xs-4">
-					        				<label><?php echo $service['vehiculo']['cliente']['cliDocumento'];?></label> 
-						        		</div>
-						        		<div class="col-xs-2">
-					        				Teléfono:
-						        		</div>
-						        		<div class="col-xs-4">
-					        				<label><?php echo $service['vehiculo']['cliente']['cliTelefono'];?></label> 
-						        		</div>
-				        			</div>
-					            </div>
-					        </div> 
+        				<div class="col-xs-4">
+	        				<label style="margin-top: 7px">Cliente</label>
 		        		</div>
-		        	</div>
-	        	</div>
-	        	<!-- Auto y otros datos del Service -->
-	        	<input type="hidden" id="idService" value="<?php echo $service['servicio']['srvId'];?>">
-	        	<div class="col-xs-6">
-	        		<!-- Datos del Vehículo -->
-	        		<div class="box box-danger box-solid">
-			            <div class="box-header with-border">
-			              <h3 class="box-title">Vehículo</h3>
-			              <!-- /.box-tools -->
-			            </div>
-			            <!-- /.box-header -->
-			            <div class="box-body">
-			              	<div class="row">
-				        		<div class="col-xs-2">
-			        				Patente:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['vehiculo']['vehPatente'];?></label> 
-				        		</div>
-				        		<div class="col-xs-2">
-			        				Tipo:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['vehiculo']['tpvDescripcion'];?></label> 
-				        		</div>
-		        			</div>
-		        			<div class="row">
-				        		<div class="col-xs-2">
-			        				Marca:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['vehiculo']['marDescripcion'];?></label> 
-				        		</div>
-				        		<div class="col-xs-2">
-			        				Modelo:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['vehiculo']['vehModelo'];?></label> 
-				        		</div>
-		        			</div>
-		        			<div class="row">
-				        		<div class="col-xs-2">
-			        				kilometros:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['servicio']['srvKm'];?></label> 
-				        		</div>
-				        		<div class="col-xs-2">
-			        				Km Próximo Servicio:
-				        		</div>
-				        		<div class="col-xs-4">
-			        				<label><?php echo $service['servicio']['srvKmProxService'];?></label> 
-				        		</div>
-		        			</div>
-			            </div>
-			        </div>          
+		        		<div class="col-xs-8">
+		        			<select class="form-control select2" id="cliId">
+						      <?php foreach ($customers as $key => $item):?>
+						        <option value="<?php echo $item['cliId'];?>" <?php echo $item['cliDefault'] == true ?'selected':''?> ><?php echo $item['cliDocumento'] . ' ' . $item['cliNombre'] . ' ' . $item['cliApellido'];?> </option>
+						      <?php endforeach;?>
+						    </select>
+		        		</div>
+        			</div> <br>
 	        	</div>
         	</div>
         	<!-- Buscador -->
@@ -179,21 +94,7 @@
 				            		</tr>
 				            	</thead>
 				            	<tbody>
-				            		<?php 
-				            		foreach ($service['servicio']['detalle'] as $key => $item):
-								        echo '<tr>';
-								    	echo '<td></td>';
-								    	echo '<td>'.$item['artProvCode'].'</td>';
-								    	echo '<td>'.$item['artDescripcion'].'</td>';
-								    	echo '<td style="text-align: right">'.$item['srvdCant'].'</td>';
-								    	echo '<td style="text-align: right">'.$item['artVenta'].'</td>';
-								    	echo '<td style="text-align: right">'.$item['artVenta'] * $item['srvdCant'].'</td>';
-                      echo '<td style="display: none">'.$item['artId'].'</td>';
-                      echo '<td style="display: none">'.$item['artCosto'].'</td>';
-                      echo '<td style="display: none">0</td>';
-                      echo '<td style="display: none">'.$item['artVenta'].'</td>';
-								    	echo '</tr>';
-								    endforeach;?>
+				            		
 								</tbody>
 			            	</table>
 			            </div>
@@ -298,6 +199,7 @@
 $("#artMprecio").maskMoney({allowNegative: false, thousands:'', decimal:'.'});
 $("#artMcantidad").maskMoney({allowNegative: false, thousands:'', decimal:'.'});
 $("#prodCant").maskMoney({allowNegative: false, thousands:'', decimal:'.'}); 
+$(".select2").select2();
 
 
 Calcular();
@@ -421,26 +323,26 @@ function AgregaraOrden(){
 $('#btnServiceBuy').click(function(){
   var importeVenta = parseFloat($('#totalSale').html());
   if(importeVenta > 0){
-    pagos = [];
-    WaitingOpen('Cargando medios...');
-        $.ajax({
-              type: 'POST',
-              data: { 
-                      id : $('#idService').val(),
-                      to : $('#totalSale').html()
-                    },
-          url: 'index.php/sale/getMPagos', 
-          success: function(result){
-                        WaitingClose();
-                        $('#modalBodyMedios').html(result.html);
-                        setTimeout("$('#modalMedios').modal('show');",800);
-                },
-          error: function(result){
-                WaitingClose();
-                ProcesarError(result.responseText, 'modalMedios');
-              },
-              dataType: 'json'
-          });
+	  pagos = [];
+	  WaitingOpen('Cargando medios...');
+	      $.ajax({
+	            type: 'POST',
+	            data: { 
+	                    id : -1,
+	                    to : $('#totalSale').html()
+	                  },
+	        url: 'index.php/sale/getMPagos', 
+	        success: function(result){
+	                      WaitingClose();
+	                      $('#modalBodyMedios').html(result.html);
+	                      setTimeout("$('#modalMedios').modal('show');",800);
+	              },
+	        error: function(result){
+	              WaitingClose();
+	              ProcesarError(result.responseText, 'modalMedios');
+	            },
+	            dataType: 'json'
+	        });
   }
 });
 
@@ -524,10 +426,10 @@ $('#btnPago').click(function(){
     $.ajax({
           type: 'POST',
           data: { 
-                  id : $('#idServ__').val(),
+                  id : -1,
                   pa : pagos,
                   dt : detalle, 
-                  cl : $('#cliId__').val()
+                  cl : $('#cliId').val()
                 },
       url: 'index.php/sale/setSale', 
       success: function(result){

@@ -45,4 +45,9 @@ class service extends CI_Controller {
 	public function printTicket(){
 		echo json_encode($this->Services->printTicket($this->input->post()));
 	}
+
+	public function index($permission){
+		$data['services'] = $this->Services->getList();
+		echo json_encode($this->load->view('services/list', $data, true));
+	}
 }
