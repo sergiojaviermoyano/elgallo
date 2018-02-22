@@ -102,6 +102,21 @@ class Boxs extends CI_Model
 										  GROUP BY r.medId');
 
 				$data['box']['medios'] = $query->result_array();
+
+				//Cobros de clientes
+				$this->db->select('sum(cuentacorrientecliente.cctepHaber) as suma', false);
+				$this->db->from('cuentacorrientecliente');
+				$this->db->where(array('cuentacorrientecliente.cajaId'=>$idBox));
+				$query = $this->db->get();
+				$data['box']['cliente'] = $query->row()->suma == null ? '0.00' : $query->row()->suma;
+
+				//Pagos a proveedores				
+				$this->db->select('sum(cuentacorrienteproveedor.cctepHaber) as suma', false);
+				$this->db->from('cuentacorrienteproveedor');
+				$this->db->where(array('cuentacorrienteproveedor.cajaId'=>$idBox));
+				$query = $this->db->get();
+				$data['box']['proveedor'] = $query->row()->suma == null ? '0.00' : $query->row()->suma;
+
 			} else {
 				$userdata = $this->session->userdata('user_data');
 
@@ -111,7 +126,7 @@ class Boxs extends CI_Model
 				$box['cajaImpApertura'] = '';
 				$box['cajaImpVentas'] = '0.00';
 				$box['cajaImpRendicion'] = '0.00';
-				$box['cajaRetiros'];
+				$box['cajaRetiros'] = '0.00';
 
 				$box['usrId'] = $userdata[0]['usrId'];
 				$box['usrName'] = $userdata[0]['usrName'];
@@ -119,6 +134,8 @@ class Boxs extends CI_Model
 
 				$data['box'] = $box;
 				$data['box']['medios'] = array();
+				$data['box']['cliente'] = '0.00';
+				$data['box']['proveedor'] = '0.00';
 			}
 
 			$data['action'] = $action;
@@ -221,6 +238,23 @@ class Boxs extends CI_Model
 		$this->db->where('cajaCierre', null);
 		$this->db->from('cajas');
 		return $this->db->count_all_results();
+	}
+
+	function getRetiros($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$idBox = $data['id'];
+			$this->db->select('retiros.*, sisusers.usrNick');
+			$this->db->from('retiros');
+			$this->db->join('sisusers', 'sisusers.usrId = retiros.usrId');
+			$this->db->where(array('retiros.cajaId'=>$idBox));
+			$query= $this->db->get();
+			return $query->result_array();
+		}
 	}
 }
 ?>

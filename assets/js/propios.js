@@ -64,6 +64,11 @@ function LoadIconAction(idTag, action){
 			icon = '<i class="fa fa-fw fa-print" style="color: #A4A4A4"></i>';
 			actt = 'Imprimir ';
 			break;
+
+		case 	'Ret':
+			icon = '<i class="fa fa-fw fa-sign-out" style="color: #3c8dbc"></i>';
+			actt = 'Consultar ';
+			break;
 	}
 
 	$('#'+idTag).html(icon + actt);

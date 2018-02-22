@@ -75,15 +75,32 @@ LoadIconAction('modalAction','Add');
 
 $('#btnAdd').click(function(){
   if($('#cliId').val() != '-1'){
-    
-    $("#cctepImporte").maskMoney({allowNegative: true, thousands:'', decimal:'.'});
-    $("#cctepImporte").val('');
-    $('#cctepConcepto').val('');
-    $('#modalMove').modal('show');
-    var data = $('#cliId').select2('data');
-    if(data) {
-      $('#prvName').html('<label>' + data[0].text + '</label>');
-    }
+    WaitingOpen('Espere...');
+    $.ajax({
+            type: 'POST',
+            data: null,
+            url: 'index.php/box/isOpenBox',
+            success: function(result){
+                        WaitingClose();
+                        if(result == 0){
+
+                        } else {
+                          $("#cctepImporte").maskMoney({allowNegative: true, thousands:'', decimal:'.'});
+                          $("#cctepImporte").val('');
+                          $('#cctepConcepto').val('');
+                          $('#modalMove').modal('show');
+                          var data = $('#cliId').select2('data');
+                          if(data) {
+                            $('#prvName').html('<label>' + data[0].text + '</label>');
+                          }
+                        }
+                },
+            error: function(result){
+                WaitingClose();
+                ProcesarError(result.responseText, 'noModal');
+              },
+              dataType: 'json'
+          });
   }
 });
 

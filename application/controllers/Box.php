@@ -61,4 +61,10 @@ class box extends CI_Controller {
 	public function isOpenBox(){
 		echo json_encode($this->Boxs->isOpenBox());	
 	}
+
+	public function getRetiros(){
+		$data['retiros'] = $this->Boxs->getRetiros($this->input->post());
+		$response['html'] = $this->load->view('boxs/retiros_', $data, true);
+		echo json_encode($response);
+	}	
 }

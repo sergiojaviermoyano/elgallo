@@ -58,6 +58,10 @@
                         echo '<i class="fa fa-fw fa-lock" style="color: #00a65a; cursor: pointer; margin-left: 15px;" onclick="LoadBox('.$c['cajaId'].',\'Close\')"></i>';
                       }
                     }
+
+                    if($c['cajaCierre'] != null){
+                        echo '<i class="fa fa-fw fa-print" style="color: gray; cursor: pointer; margin-left: 15px;" onclick="printBox('.$c['cajaId'].')"></i>';
+                      }
                     
                     if (strpos($permission,'View') !== false) {
                       echo '<i class="fa fa-fw fa-search" style="color: #3c8dbc; cursor: pointer; margin-left: 15px;" onclick="LoadBox('.$c['cajaId'].',\'View\')"></i>';
@@ -73,7 +77,7 @@
                     } else { echo '<td style="text-align: center">-</td>'; }
                     echo '<td style="text-align: left">'.$c['usrName'].', '.$c['usrLastName'].'</td>';
                     if($c['retiro'] > 0){
-                      echo '<td style="text-align: center"><i class="fa fa-fw fa-search danger" style="cursor: pointer;"></i></td>';
+                      echo '<td style="text-align: center"><i class="fa fa-fw fa-sign-out" style="color: #3c8dbc; cursor: pointer;" onclick="verEgresos('.$c['cajaId'].')"></i></td>';
                     }else{
                       echo '<td style="text-align: center"></td>';
                     }
@@ -338,7 +342,25 @@ $('#table_search').keyup(function(e) {
         });
   });
 
-
+function verEgresos(cajaId){
+  LoadIconAction('modalAction_','Ret');
+  WaitingOpen('Consultando Retiros');
+      $.ajax({
+            type: 'POST',
+            data: {id: cajaId},
+        url: 'index.php/box/getRetiros', 
+        success: function(result){
+                      WaitingClose();
+                      $("#modalBodyRetiro").html(result.html);
+                      setTimeout("$('#modalRetiro').modal('show')",800);
+              },
+        error: function(result){
+              WaitingClose();
+              ProcesarError(result.responseText, 'modalRetiro');
+            },
+            dataType: 'json'
+        });
+}
 
 </script>
 
@@ -368,7 +390,7 @@ $('#table_search').keyup(function(e) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel"><span id="modalAction_"> </span> Retiro</h4> 
+        <h4 class="modal-title" id="myModalLabel"><span id="modalAction_"> </span> Retiros</h4> 
       </div>
       <div class="modal-body" id="modalBodyRetiro">
         

@@ -11,11 +11,9 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Vehículo</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>Kilometros</th>
-                <th>Fecha</th>
+                <th>Vehículo - Marca - Modelo</th>
+                <th>Cliente</th>
+                <th width="10%">Fecha</th>
                 <th>Estado</th>
               </tr>
             </thead>
@@ -28,14 +26,12 @@
                   if($srv['srvEstado'] == 'AC')
                     echo '<i class="fa fa-fw fa-usd" style="color: #00a65a; cursor: pointer; padding-left: 10px;" onclick="CobrarService('.$srv['srvId'].')"></i>';
                   echo '</td>';
-                  echo '<td style="text-align:center">'.$srv['vehPatente'].'</td>';
-                  echo '<td>'.$srv['marDescripcion'].'</td>';
-                  echo '<td>'.$srv['vehModelo'].'</td>';
-                  echo '<td style="text-align:right">'.number_format($srv['srvKm'], 0, ",", ".").'</td>';
+                  echo '<td style="text-align:left">'.$srv['vehPatente'].' - '.$srv['marDescripcion'].' - '.$srv['vehModelo'].'</td>';
+                  echo '<td style="text-align:left">'.$srv['cliApellido'].','.$srv['cliNombre'].'</td>';
                   $date = date_create($srv['srvFecha']);   
                   echo '<td style="text-align:center">'.date_format($date, 'd-m-Y H:i').'</td>';
                   echo '<td style="text-align:center">';
-                  echo ($srv['srvEstado'] == 'AC' ? '<small class="label pull-left bg-green">Activo</small>' : ($srv['srvEstado'] == 'AN' ? '<small class="label pull-left bg-red">Anulado</small>' : '<small class="label pull-left bg-blue">Facturado</small>'));
+                  echo ($srv['srvEstado'] == 'AC' ? '<small class="label bg-green">Activo</small>' : ($srv['srvEstado'] == 'AN' ? '<small class="label bg-red">Anulado</small>' : '<small class="label bg-blue">Facturado</small>'));
                   echo '</td>';
                   echo '</tr>';
                 }

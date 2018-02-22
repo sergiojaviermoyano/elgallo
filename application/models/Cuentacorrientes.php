@@ -43,6 +43,19 @@ class Cuentacorrientes extends CI_Model
 
 			$userdata = $this->session->userdata('user_data');
 
+			//Datos de la caja 
+			$this->db->select('*');
+			$this->db->where(array('cajaCierre'=>null));
+			$this->db->from('cajas');
+			$query = $this->db->get();
+			$result = $query->result_array();
+			if(count($result) > 0){
+				$result = $query->result_array();
+				$cajaId = $result[0]['cajaId'];
+			} else {
+				$cajaId = null;
+			}
+
 			$ctacte = array(
 					'cctepConcepto'		=>	$cpto,
 					'cctepTipo'			=>	'MN',
@@ -50,7 +63,8 @@ class Cuentacorrientes extends CI_Model
 					'cctepHaber'		=>	$impte > 0 ? $impte : 0,
 					'cctepFecha'		=> 	date("Y-m-d H:i:s"),
 					'prvId'				=> 	$prvId,
-					'usrId'				=>	$userdata[0]['usrId']
+					'usrId'				=>	$userdata[0]['usrId'],
+					'cajaId'			=> 	$impte > 0 ? $cajaId : null
 				);
 
 			if($this->db->insert('cuentacorrienteproveedor', $ctacte) == false) {
@@ -98,13 +112,27 @@ class Cuentacorrientes extends CI_Model
 
 			$userdata = $this->session->userdata('user_data');
 
+			//Datos de la caja 
+			$this->db->select('*');
+			$this->db->where(array('cajaCierre'=>null));
+			$this->db->from('cajas');
+			$query = $this->db->get();
+			$result = $query->result_array();
+			if(count($result) > 0){
+				$result = $query->result_array();
+				$cajaId = $result[0]['cajaId'];
+			} else {
+				$cajaId = null;
+			}
+
 			$ctacte = array(
 					'cctepConcepto'		=>	$cpto,
 					'cctepTipo'			=>	'MN',
 					'cctepDebe'			=>	$impte < 0 ? $impte * -1 : 0,
 					'cctepHaber'		=>	$impte > 0 ? $impte : 0,
 					'cliId'				=> 	$cliId,
-					'usrId'				=>	$userdata[0]['usrId']
+					'usrId'				=>	$userdata[0]['usrId'],
+					'cajaId'			=> 	$impte > 0 ? $cajaId : null
 				);
 
 			if($this->db->insert('cuentacorrientecliente', $ctacte) == false) {

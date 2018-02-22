@@ -39,6 +39,18 @@ class sale extends CI_Controller {
 		}
 	}
 
+	public function setSaleEfectivo(){
+		$data = $this->Sales->setSaleEfectivo($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode(true);	
+		}
+	}
+
 	public function add()
 	{
 		$data['customers'] = $this->Customers->Customers_List_Single();

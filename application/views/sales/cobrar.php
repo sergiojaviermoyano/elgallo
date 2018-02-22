@@ -213,6 +213,7 @@
 			        <br>
 			        <div style="text-align: right">
 				        <button type="button" class="btn btn-default pull-left" onclick="cargarView('dash', 'accesosdirectos', '')">Cancelar</button>
+				        <button type="button" class="btn btn-primary" id="btnServiceEfectivo">Efectivo</button>
 				        <button type="button" class="btn btn-success" id="btnServiceBuy">Cobrar</button>
 				    </div>
         		</div>
@@ -542,6 +543,55 @@ $('#btnPago').click(function(){
       error: function(result){
             WaitingClose();
             ProcesarError(result.responseText, 'modalMedios');
+          },
+          dataType: 'json'
+      }); 
+  }else{
+    alert('el pago no es igual');
+  }
+});
+
+$('#btnServiceEfectivo').click(function(){
+  var importeVenta = parseFloat($('#totalSale').html());
+  if(importeVenta > 0){
+    //Barrer articulos.-
+    var table = $('#detailSale > tbody> tr');
+    var detalle = [];
+    table.each(function(r) {
+      var object = {
+        artId:          parseInt(this.children[6].textContent),
+        srvdCant:       parseFloat(this.children[3].textContent),
+        artDescripcion: this.children[2].textContent, 
+        artCosto:       parseFloat(this.children[7].textContent),
+        artventa:       parseFloat(this.children[4].textContent),
+        artProvCode:    this.children[1].textContent,
+        actualizaStock: parseInt(this.children[8].textContent)
+      };
+
+      detalle.push(object);
+    });
+    //------------------
+    WaitingOpen('Cobrando...');
+    $.ajax({
+          type: 'POST',
+          data: { 
+          		  id : $('#idServ__').val(),
+                  dt : detalle, 
+                  cl : $('#cliId__').val(),
+                  im : importeVenta
+                },
+      url: 'index.php/sale/setSaleEfectivo', 
+      success: function(result){
+                    WaitingClose();
+                    if(result == true){
+                      setTimeout("cargarView('dash', 'accesosdirectos', '');",800);
+                    } else {
+                      alert('Error');
+                    }
+            },
+      error: function(result){
+            WaitingClose();
+            ProcesarError(result.responseText, 'modal__');
           },
           dataType: 'json'
       }); 

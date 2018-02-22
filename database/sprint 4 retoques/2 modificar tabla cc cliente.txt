@@ -1,0 +1,4 @@
+ALTER TABLE `cuentacorrientecliente`
+ADD COLUMN `cajaId`  int NULL AFTER `usrId`;
+
+ALTER TABLE `cuentacorrientecliente` ADD FOREIGN KEY (`cajaId`) REFERENCES `cajas` (`cajaId`) ON DELETE RESTRICT ON UPDATE CASCADE;

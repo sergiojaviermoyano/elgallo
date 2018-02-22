@@ -207,10 +207,11 @@ class Services extends CI_Model
 	}
 
 	function getLast10Services(){
-		$this->db->select('srvId, srvFecha, srvKm, srvEstado, vehiculos.*, marcaveh.marDescripcion');
+		$this->db->select('srvId, srvFecha, srvKm, srvEstado, vehiculos.*, marcaveh.marDescripcion, clientes.cliNombre, clientes.cliApellido');
 		$this->db->from('services');
 		$this->db->join('vehiculos', 'vehiculos.vehId = services.vehId');
 		$this->db->join('marcaveh', 'marcaveh.marId = vehiculos.marId');
+		$this->db->join('clientes', 'clientes.cliId = services.cliId');
 		$this->db->order_by('srvFecha', 'desc');
 		$this->db->limit(10);
 		$query = $this->db->get();
@@ -390,10 +391,11 @@ class Services extends CI_Model
 	}
 
 	function getList(){
-		$this->db->select('srvId, srvFecha, srvKm, srvEstado, vehiculos.*, marcaveh.marDescripcion');
+		$this->db->select('srvId, srvFecha, srvKm, srvEstado, vehiculos.*, marcaveh.marDescripcion, clientes.cliNombre, clientes.cliApellido');
 		$this->db->from('services');
 		$this->db->join('vehiculos', 'vehiculos.vehId = services.vehId');
 		$this->db->join('marcaveh', 'marcaveh.marId = vehiculos.marId');
+		$this->db->join('clientes', 'clientes.cliId = services.cliId');
 		$this->db->order_by('srvFecha', 'desc');
 		$query = $this->db->get();
 

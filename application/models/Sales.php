@@ -187,6 +187,128 @@ class Sales extends CI_Model
 
 		return true;
 	}
+
+	function setSaleEfectivo($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$srvId 	 = $data['id'];
+			$detalle = $data['dt'];
+			$cliId   = $data['cl'];
+			$importe = $data['im'];
+
+			//Datos del usuario
+			$userdata = $this->session->userdata('user_data');
+			$usrId = $userdata[0]['usrId'];
+
+			//Datos de la caja 
+			$this->db->select('*');
+			$this->db->where(array('cajaCierre'=>null));
+			$this->db->from('cajas');
+			$query = $this->db->get();
+			$result = $query->result_array();
+			if(count($result) > 0){
+				$result = $query->result_array();
+				$cajaId = $result[0]['cajaId'];
+			} else {
+				return false;
+			}
+
+			$venta = array(
+				'usrId'			=> $usrId,
+				'cajaId'		=> $cajaId,
+				'srvId'			=> $srvId == -1 ? null : $srvId,
+				'cliId'			=> $srvId == -1 ? $cliId : null
+				);
+
+			$this->db->trans_start();
+			if($this->db->insert('ventas', $venta) == false) {
+				return false;
+			} else {
+				$idVenta = $this->db->insert_id();
+				
+				//Actualizar detalle
+				foreach ($detalle as $a) {
+					$insert = array(
+							'venId' 		=> $idVenta,
+							'artId' 		=> $a['artId'],
+							'artCode' 		=> $a['artProvCode'],
+							'artDescription'=> $a['artDescripcion'],
+							'artCoste'		=> $a['artCosto'],
+							'artFinal'		=> $a['artventa'],
+							'venCant'		=> $a['srvdCant']
+						);
+
+					if($this->db->insert('ventasdetalle', $insert) == false) {
+						return false;
+					}
+
+					if($a['actualizaStock'] == 1){
+						//Evaluar si el producto es simple o cumpuesto
+						$query = $this->db->get_where('articulosdetalle', array('artId' => $a['artId']));
+						$result = $query->result_array();
+						if(count($result) > 0){
+							//Producto Compuesto
+							foreach ($result as $item) {
+								$insert = array(
+									'artId' 		=> $item['artId_'],
+									'stkCant'		=> $item['artDetCantidad'] * -1 * $a['srvdCant'],
+									'stkOrigen'		=> 'VN',
+									'recId'			=> $idVenta
+								);
+
+								if($this->db->insert('stock', $insert) == false) {
+									return false;
+								}
+								
+							}
+
+						} 
+
+						//Producto Simple
+						$insert = array(
+							'artId' 		=> $a['artId'],
+							'stkCant'		=> $a['srvdCant'] * -1,
+							'stkOrigen'		=> 'VN',
+							'recId'			=> $idVenta
+						);
+
+						if($this->db->insert('stock', $insert) == false) {
+							return false;
+						}
+					}
+				}
+
+				//Insertar medio de pago efectivo
+				$insert = array(
+						'venId'			=>	$idVenta,
+						'medId'			=>	1,
+						'rcbImporte'	=>	$importe,
+						'rcbDesc1'		=>	'',
+						'rcbDesc2'		=>	'',
+						'rcbDesc3'		=>	''
+					);
+
+				if($this->db->insert('recibos', $insert) == false) {
+					return false;
+				}
+
+				//Actualizar orden de service
+				if($srvId > -1){
+					$update = array('srvEstado' => 'FA');
+					if($this->db->update('services', $update, array('srvId'=>$srvId)) == false) {
+						return false;
+					}
+				}
+			}
+			$this->db->trans_complete();
+		}
+
+		return true;
+	}
 	/*
 	function Sale_List(){
 		$data = array();
