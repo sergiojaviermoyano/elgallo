@@ -67,4 +67,8 @@ class box extends CI_Controller {
 		$response['html'] = $this->load->view('boxs/retiros_', $data, true);
 		echo json_encode($response);
 	}	
+
+	public function printBox(){
+		echo json_encode($this->Boxs->printBox($this->input->post()));
+	}
 }

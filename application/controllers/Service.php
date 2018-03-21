@@ -50,4 +50,22 @@ class service extends CI_Controller {
 		$data['services'] = $this->Services->getList();
 		echo json_encode($this->load->view('services/list', $data, true));
 	}
+
+	public function getTicket(){
+		$data['data'] = $this->Services->getServiceId($this->input->get());
+		$response['html'] = $this->load->view('services/ticket', $data, true);
+		echo json_encode($response);
+	}
+
+	public function editTicket(){
+		$data = $this->Services->editTicket($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode(true);	
+		}
+	}
 }

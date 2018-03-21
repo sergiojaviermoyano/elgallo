@@ -384,26 +384,105 @@ class Articles extends CI_Model
 
 	public function update_prices_by_rubro($data){
 
+		foreach($data['arts'] as $item ){
+			$this->db->set('artCoste', $item['coste'],FALSE);
+			$this->db->where('artId',$item['id']);
 
-		if(isset($data['artMarginIsPorcent'])){
-			$this->db->set('artCoste','artCoste + ( (artCoste*'.$data['incrementValue'].') /100)',FALSE);
-		}else{
-			$this->db->set('artCoste','artCoste +'.$data['incrementValue'].'',FALSE);
+			if(!$this->db->update("articles")){
+				return false;
+			}
 		}
+		return true;
+	}
 
-
-		if($data['subrId']==''){
-			$this->db->select('subrId')->where('rubId',$data['rubId'])->from('subrubros');
-			$subQuery =  $this->db->get_compiled_select();
-			$this->db->where("subrId IN (".$subQuery.")", NULL, FALSE);
-		}else{
-			$this->db->where('subrId',$data['subrId']);
-		}
-
-		if($this->db->update("articles")){
-			return true;
-		}else{
+	public function get_for_update_prices($data = null){
+		if($data == null){
 			return false;
+		} else {
+			$where = array();
+			//marca
+			if($data['mar'] != ''){
+				$where['marcId'] = $data['mar'];
+			}
+			//subrubro
+			if($data['sub'] != ''){
+				$where['subrId'] = $data['sub'];
+			} else {
+				//Ver si es por rubro
+				if($data['rub'] != ''){
+						$this->db->where_in('subrId', $this->getSubrubros($data['rub'] ));
+				} else {
+					//nada
+				}
+			}
+			$this->db->select('artId, artBarCode, artProvCode, artDescription, artCoste, artMargin, artMarginIsPorcent');
+			$this->db->from('articles');
+			$this->db->where($where);
+			$query = $this->db->get();
+			return $query->result_array();
+		}
+	}
+
+	function getSubrubros($id){
+		$da = array();
+		$this->db->select('subrId');
+		$query = $this->db->get_where('subrubros', array('rubId' => $id, 'subrEstado' => 'AC'));
+		foreach ($query->result_array() as $value) {
+			array_push($da, $value['subrId']);
+		};
+		return $da;
+	}
+
+	public function get_for_update_prices_by_file($data = null){
+		if($data == null){
+			return false;
+		} else {
+			$JSon = $data['json'];
+			$return = array();
+			$cantidad = count($JSon);
+			
+			$indice = 0;
+			$tope = 200;
+
+			if($tope > $cantidad){
+				$tope = $cantidad - 1;
+			}
+
+			$corte = false;
+			while (!$corte){
+				$whereIn = array();
+				for($i = $indice; $i < $tope; $i++ ){
+					if(isset($JSon[$i]))
+						$whereIn[] = $JSon[$i]['codigo_art'];
+				}
+				if($tope >= ($cantidad -1)){
+					$corte = true;
+				}
+				$indice += 200;
+				$tope += 200;
+				$this->db->select('artId, artBarCode, artProvCode, artDescription, artCoste, artMargin, artMarginIsPorcent');
+				$this->db->from('articles');
+				$this->db->where_in('artProvCode', $whereIn);
+				$query = $this->db->get();
+				foreach($query->result_array() as $item){
+					$return[] = $item;
+				}
+			}
+
+			$data = array();
+			foreach ($return as $item) {
+				//Buscar nuevo precio de costo
+				foreach($JSon as $JSonItem)
+				{
+				    if($JSonItem['codigo_art'] == $item['artProvCode'])
+				    {
+				        $item['costo'] = $JSonItem['precio'];
+				        break;
+				    }
+				}
+				$data[] = $item;
+			}
+			return $data;
 		}
 	}
 

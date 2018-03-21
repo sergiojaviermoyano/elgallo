@@ -401,4 +401,46 @@ class Services extends CI_Model
 
 		return $query->result_array();
 	}
+
+	function editTicket($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$tickt = $data['tickt'];
+
+			//ticket
+			$ticket = array(
+					'lavado'		=> ($tickt['lavado'] === 'true'),
+					'lavadoMotor'	=> ($tickt['lavadoMotor'] === 'true'),
+					'lavadoConMotor'=> ($tickt['lavadoCmotor'] === 'true'),
+					'pulido'		=> ($tickt['pulido'] === 'true'),
+					'acMotor'       => ($tickt['acMotor'] === 'true'),
+		            'acNombre'      => $tickt['acNombre'],
+		            'acLitros'      => $tickt['acLitros'],
+		            'fAire'         => ($tickt['fAire'] === 'true'),
+		            'fAceite'       => ($tickt['fAceite'] === 'true'),
+		            'fCombustible'  => ($tickt['fCombustible'] === 'true'),
+		            'fHabitaculo'   => ($tickt['fHabitaculo'] === 'true'),
+		            'agAgua'        => ($tickt['agAgua'] === 'true'),
+		            'cAgua'         => ($tickt['cAgua'] === 'true'),
+		            'aLiquiFre'     => ($tickt['aLiquiFre'] === 'true'),
+		            'aditivoAceite' => ($tickt['aditivoAceite'] === 'true'),
+		            'aHidraulico'   => ($tickt['aHidraulico'] === 'true'),
+		            'aLiquidoParabrisa'  => ($tickt['aLiquidoParabrisa'] === 'true'),
+		            'cAceiteHidraulico'  => ($tickt['cAceiteHidraulico'] === 'true'),
+		            'aTransCaja'         => ($tickt['aTransCaja'] === 'true'),
+		            'aTransCajaLitros'   => $tickt['aTransCajaLitros'],
+		            'aDifer'             => ($tickt['aDifer'] === 'true'),
+		            'aDiferLitros'       => $tickt['aDiferLitros'],
+		            'otros'			=> $tickt['otros']
+				);
+
+			if($this->db->update('serviceticket', $ticket, array('srvId' => $tickt['id_'])) == false) {
+					return false;
+				}
+		}
+	}
 }

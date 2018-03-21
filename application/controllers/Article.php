@@ -112,4 +112,28 @@ class article extends CI_Controller {
 		}
 	}
 
+	public function get_for_update_prices_by_rubro(){
+		$data=$this->Articles->get_for_update_prices($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode($data);
+		}
+	}
+
+	public function get_for_update_prices_by_file(){
+		$data=$this->Articles->get_for_update_prices_by_file($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode($data);
+		}
+	}
+
 }

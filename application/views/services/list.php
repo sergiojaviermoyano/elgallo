@@ -23,6 +23,7 @@
                   echo '<tr>';
                   echo '<td style="text-align:center">';
                   echo '<i class="fa fa-fw fa-print" style="color: gray; cursor: pointer;" onclick="printTicket('.$srv['srvId'].')"></i>';
+                  echo '<i class="fa fa-fw fa-pencil" style="color: #f39c12; cursor: pointer; padding-left: 10px;" onclick="editTicket('.$srv['srvId'].')"></i>';
                   if($srv['srvEstado'] == 'AC')
                     echo '<i class="fa fa-fw fa-usd" style="color: #00a65a; cursor: pointer; padding-left: 10px;" onclick="CobrarService('.$srv['srvId'].')"></i>';
                   echo '</td>';
@@ -68,5 +69,87 @@
     });
   });
 
+  function editTicket(id_){
+    WaitingOpen('Cargando Ticket');
+      $.ajax({
+            type: 'GET',
+            data: { id : id_ },
+        url: 'index.php/service/getTicket',
+        success: function(result){
+                      WaitingClose();
+                      $("#modalBodySrvTkt").html(result.html);
+                      setTimeout("$('#modalSrvTkt').modal('show')",800);
+              },
+        error: function(result){
+              WaitingClose();
+              ProcesarError(result.responseText, 'modalSrvTkt');
+            },
+            dataType: 'json'
+        });
+  }
 
+  $('#btnEditTicket').click(function(){
+    var ticket = {
+            acMotor:              $('#acMotor').prop('checked'),
+            acNombre:             $('#acNombre').val(),
+            acLitros:             $('#acLitros').val(),
+            fAire:                $('#fAire').prop('checked'),
+            fAceite:              $('#fAceite').prop('checked'),
+            fCombustible:         $('#fCombustible').prop('checked'),
+            fHabitaculo:          $('#fHabitaculo').prop('checked'),
+            agAgua:               $('#agAgua').prop('checked'),
+            cAgua:                $('#cAgua').prop('checked'),
+            aLiquiFre:            $('#aLiquiFre').prop('checked'),
+            aditivoAceite:        $('#aditivoAceite').prop('checked'),
+            aHidraulico:          $('#aHidraulico').prop('checked'),
+            aLiquidoParabrisa:    $('#aLiquidoParabrisa').prop('checked'),
+            cAceiteHidraulico:    $('#cAceiteHidraulico').prop('checked'),
+            aTransCaja:           $('#aTransCaja').prop('checked'),
+            aTransCajaLitros:     $('#aTransCajaLitros').val(),
+            aDifer:               $('#aDifer').prop('checked'),
+            aDiferLitros:         $('#aDiferLitros').val(),
+            lavado:               $('#lavado').prop('checked'),
+            lavadoCmotor:         $('#lavadoCmotor').prop('checked'),
+            lavadoMotor:          $('#lavadoMotor').prop('checked'),
+            pulido:               $('#pulido').prop('checked'),
+            otros:                $('#otros').val(),
+            id_:                  $('#idSrv_').val()
+    };
+
+    WaitingOpen('Editando Ticket');
+    $.ajax({
+        type: 'POST',
+        data: { 
+                tickt: ticket
+              },
+    url: 'index.php/service/editTicket', 
+    success: function(result){
+              WaitingClose();
+              $('#modalSrvTkt').modal('hide');
+          },
+    error: function(result){
+          WaitingClose();
+          ProcesarError(result.responseText, 'modalSrvTkt');
+        },
+        dataType: 'json'
+    });
+  });
   </script>
+
+  <div class="modal fade" id="modalSrvTkt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document" style="width: 80%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" ><span><i class="fa fa-fw fa-pencil" style="color: #f39c12;"></i> </span> Editar Ticket de Servicio</h4> 
+      </div>
+      <div class="modal-body" id="modalBodySrvTkt">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btnEditTicket">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -199,7 +199,7 @@ class Groups extends CI_Model
 		$this->db->join('sismenu', 'sismenu.menuId = sismenuactions.menuId');
 		$this->db->where('sisgroups.grpId', $grpId);
 		$this->db->group_by('sismenu.menuName');
-		$this->db->order_by("sismenu.menuId", "asc");
+		//$this->db->order_by("sismenu.menuId", "asc");
 		$this->db->order_by("sismenu.menuFather", "asc");
 		
 		$query = $this->db->get();

@@ -145,8 +145,11 @@ $('#table_search').keyup(function(e) {
                         var row = '';
                         row += '<tr>';
                         row += '<td>';
+
                         if(value.cajaCierre == null){
                           row += '<i class="fa fa-fw fa-lock" style="color: #00a65a; cursor: pointer; margin-left: 15px;" onclick="LoadBox('+value.cajaId+',\'Close\')"></i>';
+                        } else {
+                          row += '<i class="fa fa-fw fa-print" style="color: gray; cursor: pointer; margin-left: 15px;" onclick="printBox('+value.cajaId+')"></i>';
                         }
                         row += '<i class="fa fa-fw fa-search" style="color: #3c8dbc; cursor: pointer; margin-left: 15px;" onclick="LoadBox('+value.cajaId+',\'View\')"></i>';
                         row += '</td>';
@@ -159,7 +162,7 @@ $('#table_search').keyup(function(e) {
                         } else { row += '<td style="text-align: center">-</td>'; }
                         row += '<td style="text-align: left">'+value.usrName+', '+value.usrLastName+'</td>';
                         if(value.retiro > 0){
-                          row +='<td style="text-align: center"><i class="fa fa-fw fa-search danger" style="cursor: pointer;"></i></td>';
+                          row +='<td style="text-align: center"><i class="fa fa-fw fa-sign-out" style="color: #3c8dbc; cursor: pointer;" onclick="verEgresos('+value.cajaId+')"></i></td>';
                         }else{
                           row +='<td style="text-align: center"></td>';
                         }
@@ -357,6 +360,29 @@ function verEgresos(cajaId){
         error: function(result){
               WaitingClose();
               ProcesarError(result.responseText, 'modalRetiro');
+            },
+            dataType: 'json'
+        });
+}
+
+function printBox(cajaId){
+    WaitingOpen('Generando Informe...');
+    LoadIconAction('modalAction__','Print');
+    $.ajax({
+            type: 'POST',
+            data: {
+                    id : cajaId
+                  },
+        url: 'index.php/box/printBox',
+        success: function(result){
+                      WaitingClose();
+                      var url = "./assets/boxs/" + result;
+                      $('#printDoc').attr('src', url);
+                      setTimeout("$('#modalPrint').modal('show')",800);
+              },
+        error: function(result){
+              WaitingClose();
+              ProcesarError(result.responseText, 'modalPrint');
             },
             dataType: 'json'
         });
