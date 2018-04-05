@@ -246,7 +246,12 @@ class Services extends CI_Model
 								<tr><td>Sr.:</td><td colspan="3"><strong>'.$result['vehiculo']['cliente']['cliNombre'].' '.$result['vehiculo']['cliente']['cliApellido'].'</strong></td></tr>
 								<tr><td>Vehículo/Modelo</td><td colspan="3"><strong>'.$result['vehiculo']['marDescripcion'].' '.$result['vehiculo']['vehModelo'].'<strong></strong></td></tr>
 								<tr><td>Patente</td><td colspan="3"><strong>'.$result['vehiculo']['vehPatente'].'</strong></td></tr>
-								<tr><td>N° Móvil:</td>
+								<tr>
+									<td>N° Móvil:</td>
+									<td colspan="3"><strong>'.$result['vehiculo']['vehMovil'].'</strong></td>
+								</tr>
+								<tr>
+									<td>Teléfono:</td>
 									<td><strong>'.$result['vehiculo']['cliente']['cliTelefono'].'</strong></td>
 									<td>KILOMETROS: <strong>'.number_format($result['servicio']['srvKm'], 0, ",", ".").'</strong></td>
 									<td>PROX: <strong>'.number_format($result['servicio']['srvKmProxService'], 0, ",", ".").'</strong></td>

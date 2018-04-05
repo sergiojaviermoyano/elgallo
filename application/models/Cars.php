@@ -93,13 +93,15 @@ class Cars extends CI_Model
 			$marca 		= $data['marca'];
             $modelo 	= $data['modelo'];
             $tipo 		= $data['tipo'];
+            $movil 		= $data['movil'];
 
             $data = array(
             		'vehPatente'	=> $patente,
             		'marId'			=> $marca,
             		'vehModelo'		=> $modelo,
             		'tpvId'			=> $tipo,
-            		'vehEstado'		=> 'AC'
+            		'vehEstado'		=> 'AC',
+            		'vehMovil'		=> $movil
             	);
 
             if($this->db->insert('vehiculos', $data) == false) {

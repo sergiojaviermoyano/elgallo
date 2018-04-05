@@ -59,5 +59,6 @@ $('#prodCantAsoc').keyup(function(e) {
 
 $('#btnAddArticlesAsoc').click(function(){
   AddToAsociateArticles();
+  
 });
 </script>

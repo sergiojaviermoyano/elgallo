@@ -270,6 +270,14 @@
               </select>
             </div>
           </div><br>
+          <div class="row">
+            <div class="col-xs-3">
+              <label style="margin-top: 7px;">Movil: </label>
+            </div>
+            <div class="col-xs-9">
+              <input type="text" class="form-control" id="carMovil" value="" maxlength="50">
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -494,7 +502,11 @@ function BuscarVehiculo(){
                       $('#carPatente').val($('#patente').val());
                       setTimeout("$('#modalCar').modal('show');",1000);
                     } else {
-                      $('#lblPatente').html(result.vehiculo.vehPatente);
+                      if(result.vehiculo.vehMovil != '' && result.vehiculo.vehMovil != null){
+                        $('#lblPatente').html(result.vehiculo.vehPatente + '(Mov:' + result.vehiculo.vehMovil + ')');
+                      } else {
+                        $('#lblPatente').html(result.vehiculo.vehPatente);
+                      }
                       $('#lblMarca').html(result.vehiculo.marDescripcion);
                       $('#lblTipo').html(result.vehiculo.tpvDescripcion);
                       $('#lblModelo').html(result.vehiculo.vehModelo);
@@ -801,7 +813,8 @@ $('#btnSaveCar').click(function(){
                   patente:  $('#carPatente').val(),
                   marca:    $('#carMarca').val(),
                   modelo:   $('#carModelo').val(),
-                  tipo:     $('#carTipo').val()
+                  tipo:     $('#carTipo').val(),
+                  movil:    $('#carMovil').val()
                 },
       url: 'index.php/car/setCar', 
       success: function(result){
@@ -835,6 +848,7 @@ function LoadArticlesAsociates(){
                 WaitingClose();
                 $("#modalBodyArt").html(result.html);
                 setTimeout("$('#modalArt').modal('show')",800);
+                setTimeout("$('#lblProductoAsoc').focus()",1200);
         },
   error: function(result){
         WaitingClose();
