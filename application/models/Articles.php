@@ -22,6 +22,32 @@ class Articles extends CI_Model
 		}
 	}
 
+	function Articles_List_Stock(){
+
+
+		$this->db->select('*, (select sum(stkCant) from stock as s Where s.artId = articles.artId) as stock, 
+						(Case 
+							When (select sum(stkCant) from stock as s Where s.artId = articles.artId) = null then 1
+							When (select sum(stkCant) from stock as s Where s.artId = articles.artId) > artMaximo Then 4
+							When (select sum(stkCant) from stock as s Where s.artId = articles.artId) <= artMaximo and (select sum(stkCant) from stock as s Where s.artId = articles.artId) > artMedio Then 3
+							When (select sum(stkCant) from stock as s Where s.artId = articles.artId) <= artMedio and (select sum(stkCant) from stock as s Where s.artId = articles.artId) > artMinimo Then 2
+							Else 1
+						End) as ordenN
+						');
+		$this->db->order_by('ordenN', 'asc');
+		$this->db->from('articles');
+		$query= $this->db->get();
+
+		if ($query->num_rows()!=0)
+		{
+			return $query->result_array();
+		}
+		else
+		{
+			return array();
+		}
+	}
+
 	function getArticleJson($data = null){
 		if($data == null)
 		{

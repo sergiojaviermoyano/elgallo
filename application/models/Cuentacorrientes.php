@@ -142,5 +142,46 @@ class Cuentacorrientes extends CI_Model
 			return true;
 		}
 	}
+
+	function invertir($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$id = $data['id'];
+			$result= array();
+
+			$query= $this->db->get_where('cuentacorrienteproveedor',array('cctepId'=>$id));
+			if ($query->num_rows() != 0)
+			{
+				$c = $query->result_array();
+				$c = $c[0];
+
+				$data = array();
+				if($c['cctepDebe'] > 0){
+					$data['cctepHaber'] = $c['cctepDebe'];
+					$data['cctepDebe'] = 0;
+				}
+
+				if($c['cctepHaber'] > 0){
+					$data['cctepDebe'] = $c['cctepHaber'];
+					$data['cctepHaber'] = 0;
+
+				}
+				if($this->db->update('cuentacorrienteproveedor', $data, array('cctepId'=>$id)) == false) {
+				 		return false;
+				 	}
+
+			}else{
+				return false;
+			}
+
+			
+
+			return $result;
+		}
+	}
 }
 ?>

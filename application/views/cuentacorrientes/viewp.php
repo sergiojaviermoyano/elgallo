@@ -10,6 +10,7 @@
             <th>Debe</th>
             <th>Haber</th>
             <th>Usuario</th>
+            <th width="1%"></th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
 	      	echo '<td style="text-align:right">'.number_format ( $m['cctepDebe'] , 2 , "," , "." ).'</td>';
 	      	echo '<td style="text-align:right">'.number_format ( $m['cctepHaber'] , 2 , "," , "." ).'</td>';
           echo '<td style="text-align:center">'.$m['usrNick'].'</td>';
+          echo '<td style="text-align: center; cursor: pointer;" onClick="Invertir('.$m['cctepId'].')"><i class="fa fa-fw fa-refresh" style="color: #00c0ef;"></i></td>';
 	      	echo '</tr>';
 	      	$debe+= $m['cctepDebe'];
 	      	$haber+= $m['cctepHaber'];

@@ -17,6 +17,14 @@ class article extends CI_Controller {
 		echo json_encode($this->load->view('articles/list', $data, true));
 	}
 
+	public function faltante($permission)
+	{
+		$data['list'] = $this->Articles->Articles_List_Stock();
+		$data['permission'] = $permission;
+		echo json_encode($this->load->view('articles/listf', $data, true));
+	}
+
+
 	public function getArticle(){
 		$data['data'] = $this->Articles->getArticle($this->input->post());
 		$response['html'] = $this->load->view('articles/view_', $data, true);

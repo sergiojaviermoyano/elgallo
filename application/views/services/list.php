@@ -22,7 +22,8 @@
                 foreach ($services as $srv) {
                   echo '<tr>';
                   echo '<td style="text-align:center">';
-                  echo '<i class="fa fa-fw fa-print" style="color: gray; cursor: pointer;" onclick="printTicket('.$srv['srvId'].')"></i>';
+                  echo '<i class="fa fa-fw fa-info" style="color: #00c0ef ; cursor: pointer;" onclick="verProductos('.$srv['vehId'].')"></i>';
+                  echo '<i class="fa fa-fw fa-print" style="color: gray; cursor: pointer; padding-left: 10px;" onclick="printTicket('.$srv['srvId'].')"></i>';
                   echo '<i class="fa fa-fw fa-pencil" style="color: #f39c12; cursor: pointer; padding-left: 10px;" onclick="editTicket('.$srv['srvId'].')"></i>';
                   if($srv['srvEstado'] == 'AC')
                     echo '<i class="fa fa-fw fa-usd" style="color: #00a65a; cursor: pointer; padding-left: 10px;" onclick="CobrarService('.$srv['srvId'].')"></i>';
@@ -134,6 +135,26 @@
         dataType: 'json'
     });
   });
+
+function verProductos(vehId){
+  WaitingOpen('Cargando Artículos');
+  LoadIconAction('modalAction_','View');
+  $.ajax({
+      type: 'POST',
+      data: { id : vehId },
+  url: 'index.php/car/findCarArticlesView', 
+  success: function(result){
+                WaitingClose();
+                $("#modalBodyArt").html(result.html);
+                setTimeout("$('#modalArt').modal('show')",800);
+        },
+  error: function(result){
+        WaitingClose();
+        ProcesarError(result.responseText, 'modalBrand');
+      },
+      dataType: 'json'
+  });
+}
   </script>
 
   <div class="modal fade" id="modalSrvTkt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -149,6 +170,24 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-primary" id="btnEditTicket">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalArt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document" style="width:80%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><span id="modalAction_"> </span> Artículos</h4> 
+      </div>
+      <div class="modal-body" id="modalBodyArt">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

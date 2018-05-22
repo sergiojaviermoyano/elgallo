@@ -21,6 +21,12 @@ class car extends CI_Controller {
 		echo json_encode($response);
 	}
 
+	public function findCarArticlesView(){
+		$data['data'] = $this->Cars->findCarArticles($this->input->post());
+		$response['html'] = $this->load->view('cars/vehicle_articles_view', $data, true);
+		echo json_encode($response);
+	}
+
 	public function setCar(){
 		$data = $this->Cars->setCar($this->input->post());
 		if($data  == false)

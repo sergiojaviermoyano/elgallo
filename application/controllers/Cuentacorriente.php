@@ -64,4 +64,16 @@ class cuentacorriente extends CI_Controller {
 			echo json_encode(true);	
 		}
 	}
+
+	public function invertir(){
+		$data = $this->Cuentacorrientes->invertir($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode(true);	
+		}
+	}
 }

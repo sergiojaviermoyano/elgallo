@@ -163,6 +163,22 @@ function LoadRec(id_){
       });
 }
 
+function Invertir(id){
+  WaitingOpen('Invirtiendo Pago');
+    $.ajax({
+          type: 'POST',
+          data: { id : id },
+      url: 'index.php/cuentacorriente/invertir', 
+      success: function(result){
+                    CargarMoviemientos();
+            },
+      error: function(result){
+            WaitingClose();
+            alert("error");
+          },
+          dataType: 'json'
+      });
+}
 </script>
 
 <!-- Modal -->
