@@ -7,6 +7,8 @@ class car extends CI_Controller {
         {
 		parent::__construct();
 		$this->load->model('Cars');
+		$this->load->model('Brands');
+		$this->load->model('Types');
 		$this->Users->updateSession(true);
 	}
 
@@ -62,26 +64,33 @@ class car extends CI_Controller {
 			echo json_encode(true);	
 		}
 	}
-	/*
+
 	public function index($permission)
 	{
-		$data['list'] = $this->Boxs->Box_List();
+		$data['list'] = $this->Cars->Car_list();
 		$data['permission'] = $permission;
-		echo json_encode($this->load->view('boxs/list', $data, true));
+		echo json_encode($this->load->view('cars/list', $data, true));
 	}
 
-	public function pagination()
-	{
-		echo json_encode($this->Boxs->Box_List($this->input->post()));
-	}
-	
-	
-	public function getBox(){
-		$data['data'] = $this->Boxs->getBox($this->input->post());
-		$response['html'] = $this->load->view('boxs/view_', $data, true);
+	public function getCar(){
+		$data['data'] = array();
+		$data['data']['car'] = $this->Cars->getCar($this->input->post());
+		$data['data']['brand'] = $this->Brands->BrandVeh_list(); 
+		$data['data']['types'] = $this->Types->VehiclesType_list();
+		$response['html'] = $this->load->view('cars/view_', $data, true);
 		echo json_encode($response);
 	}
 
-	*/
+	public function updateCar(){
+		$data = $this->Cars->updateCar($this->input->post());
+		if($data  == false)
+		{
+			echo json_encode(false);
+		}
+		else
+		{
+			echo json_encode(true);	
+		}
+	}
 	
 }

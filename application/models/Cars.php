@@ -159,4 +159,80 @@ class Cars extends CI_Model
 			return true;
 		}
 	}
+
+	function Car_list(){
+		$this->db->from('vehiculos');
+		$this->db->order_by('vehPatente', 'asc');
+		$query = $this->db->get();
+
+		if ($query->num_rows()!=0)
+		{
+			return $query->result_array();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	function getCar($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$action = $data['act'];
+			$idCar = $data['id'];
+
+			$data = array();
+
+			//Datos del auto
+			$query= $this->db->get_where('vehiculos',array('vehId'=>$idCar));
+			if ($query->num_rows() != 0)
+			{
+				$p = $query->result_array();
+				$data['vehiculo'] = $p[0];
+			} 
+			//Readonly
+			$readonly = false;
+			if($action == 'Del' || $action == 'View'){
+				$readonly = true;
+			}
+			$data['read'] = $readonly;
+
+			return $data;
+		}
+	}
+
+	function updateCar($data = null){
+		if($data == null)
+		{
+			return false;
+		}
+		else
+		{
+			$patente 	= strtoupper(str_replace(' ', '',$data['patente']));  
+			$marca 		= $data['marca'];
+            $modelo 	= $data['modelo'];
+            $tipo 		= $data['tipo'];
+            $movil 		= $data['movil'];
+            $id 		= $data['id'];
+
+            $data = array(
+            		'vehPatente'	=> $patente,
+            		'marId'			=> $marca,
+            		'vehModelo'		=> $modelo,
+            		'tpvId'			=> $tipo,
+            		'vehEstado'		=> 'AC',
+            		'vehMovil'		=> $movil
+            	);
+
+            if($this->db->update('vehiculos', $data, array('vehId'=>$id)) == false) {
+				return false;
+			} 
+
+			return true;
+		}
+	}
 }
